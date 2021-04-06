@@ -10,6 +10,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './redux/reducers';
 import thunk from 'redux-thunk';
+import MainScreen from './components/Main';
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -73,10 +74,10 @@ export default class App extends Component {
     }
 
     return(
-      <View style={{flex:1, justifyContent: 'center'}}>
-        <Text>Logged in</Text>
-      </View>
-    )
+      <Provider store={store}>
+        <MainScreen/>
+      </Provider>
+      )
   }
 }
 

@@ -11,6 +11,7 @@ import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './redux/reducers';
 import thunk from 'redux-thunk';
 import MainScreen from './components/Main';
+import AddScreen from './components/main/Add';
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -67,7 +68,7 @@ export default class App extends Component {
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Landing">
             <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }}/> 
-            <Stack.Screen name="Register" component={RegisterScreen}/> 
+            <Stack.Screen name="Register" component={RegisterScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       );
@@ -75,7 +76,12 @@ export default class App extends Component {
 
     return(
       <Provider store={store}>
-        <MainScreen/>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Main">
+            <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }}/> 
+            <Stack.Screen name="Add" component={AddScreen}/> 
+          </Stack.Navigator>
+        </NavigationContainer>
       </Provider>
       )
   }

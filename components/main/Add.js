@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, TouchableOpacity, Button, Image } from 'react-n
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function App() {
+
+export function Add({navigation}, {isFocused}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
@@ -75,6 +76,7 @@ export default function App() {
         </Button>
         <Button title="Take picture" onPress={() => takePicture()}/>
         <Button title="Pick image from library" onPress={() => pickImage()}/>
+        <Button title="Save" onPress={() => navigation.navigate("Save", {image})}/>
         {image && <Image source={{uri: image}} style={{flex:1}}/>}
     </View>
   );
@@ -90,3 +92,5 @@ const styles = StyleSheet.create({
         aspectRatio: 1,
     }
 })
+
+export default withNavigationFocus(Add)

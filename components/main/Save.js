@@ -1,8 +1,8 @@
 import React, { useState } from 'react'; 
 import { View, Image, TextInput, Text, Button } from 'react-native';
 import firebase from 'firebase';
-require('firebase/firestore')
-require('firebase/firebase-storage')
+require('firebase/firestore');
+require('firebase/firebase-storage');
 
 export default function Save({navigation, route}){
     const [caption, setCaption] = useState("")
@@ -24,6 +24,7 @@ export default function Save({navigation, route}){
 
         const taskCompleted = () => {
             task.snapshot.ref.getDownloadURL().then((snapshot) => {
+                savePostData(snapshot);
                 console.log(snapshot)
             })
         }
@@ -33,13 +34,28 @@ export default function Save({navigation, route}){
         }
 
         task.on("state_changed", taskProgress, taskError, taskCompleted)
+
+        const savePostData = (downloadURL) => {
+            firebase.firestore()
+            .collection('posts')
+            .doc(firebase.auth().currentUser.uid)
+            .collection('userPosts')
+            .doc(`${Math.random().toString(36)}`)
+            .set({
+                downloadURL,
+                caption,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then((function(){
+                navigation.popToTop()
+            }))
+        }
     }
     return(
         <View style={{flex: 1}}>
             <Image source={{uri: route.params.image}}/>
             <TextInput 
             placeholder="Write a caption..."
-            onChange={(caption) => setCaption(caption)}/>
+            onChangeText={(caption) => setCaption(caption)}/>
             <Button title="Save" onPress={() => uploadImage()}/>
         </View>
     )

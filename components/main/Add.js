@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Button, Image } from 'react-native';
 import { Camera } from 'expo-camera';
+import { useIsFocused } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 
-export function Add({navigation}, {isFocused}) {
+export function Add({navigation}) {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [hasGalleryPermission, setHasGalleryPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [camera, setCamera] = useState(null);
   const [image, setImage] = useState(null);
+  const isFocused = useIsFocused()
   
   useEffect(() => {
     (async () => {
@@ -53,11 +55,11 @@ export function Add({navigation}, {isFocused}) {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.cameraContainer}>
-        <Camera
+        {isFocused && <Camera
         ref={ref => setCamera(ref)} 
         style={styles.fixedRatio} 
         type={type}
-        ratio='1:1'/>
+        ratio='1:1'/>}
       </View>
       <Button
             style={{
@@ -93,4 +95,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default withNavigationFocus(Add)
+export default Add

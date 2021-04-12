@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { View, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser } from '../redux/actions/index';
+import { fetchUser, fetchUserPosts } from '../redux/actions/index';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import FeedScreen from './main/Feed';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -16,6 +16,7 @@ const EmptyScreen = () => {
 export class MainScreen extends Component{
     componentDidMount(){
         this.props.fetchUser()
+        this.props.fetchUserPosts()
     }
 
     render(){
@@ -53,6 +54,6 @@ export class MainScreen extends Component{
 const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
-const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser,fetchUserPosts}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

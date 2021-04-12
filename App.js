@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { LogBox, StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import * as firebase from 'firebase';
@@ -32,6 +32,7 @@ if (firebase.apps.length === 0){
 }
 
 const Stack = createStackNavigator();
+LogBox.ignoreLogs(["Setting a timer"])
 
 export default class App extends Component {
   constructor(props){

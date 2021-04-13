@@ -8,6 +8,8 @@ import FeedScreen from './main/Feed';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import ProfileScreen from './main/Profile';
 import AddScreen from './main/Add';
+import SearchScreen from './main/Search';
+import firebase from 'firebase';
 
 const Tab = createMaterialBottomTabNavigator()
 const EmptyScreen = () => {
@@ -18,7 +20,6 @@ export class MainScreen extends Component{
         this.props.fetchUser()
         this.props.fetchUserPosts()
     }
-
     render(){
         return(
             <Tab.Navigator initialRouteName="Feed" labeled={false}>
@@ -26,6 +27,12 @@ export class MainScreen extends Component{
                 options={{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="home" color={color} size={26}/>
+                    )
+                }}/>
+                <Tab.Screen name="Search" component={SearchScreen}
+                options={{
+                    tabBarIcon: ({ size, color }) => (
+                        <MarerialCommunityIcons name="magnify" color={color} size={26}/>
                     )
                 }}/>
                 <Tab.Screen name="AddContainer" component={EmptyScreen}
@@ -41,6 +48,12 @@ export class MainScreen extends Component{
                     )
                 }}/>
                 <Tab.Screen name="Profile" component={ProfileScreen}
+                listeners={({ navigation })=>({
+                    tabPress: event => {
+                        event.preventDefault()
+                        navigation.navigate("Profile", {uid: firebase.auth().currentUser.uid})
+                    }
+                })}
                 options={{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="account-circle" color={color} size={26}/>

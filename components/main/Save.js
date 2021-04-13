@@ -51,8 +51,8 @@ export default function Save({navigation, route}){
         }
     }
     return(
-        <View style={{flex: 1}}>
-            <Image source={{uri: route.params.image}}/>
+        <View style={{flex:1}}>
+            <Image source={{uri: route.params.image}} style={{flex:1}}/>
             <TextInput 
             placeholder="Write a caption..."
             onChangeText={(caption) => setCaption(caption)}/>

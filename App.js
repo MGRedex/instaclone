@@ -14,6 +14,7 @@ import MainScreen from './components/Main';
 import AddScreen from './components/main/Add';
 import LoginScreen from './components/auth/Login';
 import SaveScreen from './components/main/Save';
+import CommentsScreen from './components/main/Comments';
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -85,6 +86,7 @@ export default class App extends Component {
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }}/>
             <Stack.Screen name="Add" component={AddScreen}/>
             <Stack.Screen name="Save" component={SaveScreen}/>
+            <Stack.Screen name="Comments" component={CommentsScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       </Provider>

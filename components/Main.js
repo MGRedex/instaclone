@@ -24,7 +24,11 @@ export class MainScreen extends Component{
     }
     render(){
         return(
-            <Tab.Navigator initialRouteName="Feed" labeled={false}>
+            <Tab.Navigator 
+            nitialRouteName="Feed" 
+            labeled={false}
+            activeColor="black"
+            barStyle={{backgroundColor:"white"}}>
                 <Tab.Screen name="Feed" component={FeedScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => (

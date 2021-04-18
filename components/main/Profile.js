@@ -2,6 +2,7 @@ import firebase from 'firebase';
 import React, { useEffect, useState, Component } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button } from 'react-native';
 import { connect } from 'react-redux';
+import { NickName, UserProfileAvatar, UserProfileMainInfo } from '../../Styles';
 
 export function Profile(props){
     const [user, setUser] = useState([])
@@ -91,8 +92,27 @@ export function Profile(props){
     return (
         <View style={styles.container}>
             <View styles={styles.userInfo}>
-                <Text>{user.name}</Text>
-                <Text>{user.email}</Text>
+                <View style={{flexDirection:"row", alignItems:"center"}}>
+                    <UserProfileAvatar
+                        style={{
+                            margin:4,
+                            marginLeft:8
+                        }}
+                        source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
+                    <View style={{flex:1}}>
+                        <NickName style={{fontSize:20, marginBottom:7}}>{user.name}</NickName>
+                        <View style={{
+                            width:"100%",
+                            flexDirection:"row",
+                            justifyContent:"space-between"}}>
+                            <Text>{userPosts.length} Posts</Text>
+                            <Text>|</Text>
+                            <Text>2 Followers</Text>
+                            <Text>|</Text>
+                            <Text style={{marginRight:8}}>3 Subscribes</Text>
+                        </View>
+                    </View>
+                </View>
                 {props.route.params.uid !== firebase.auth().currentUser.uid ? ( 
                     <View>
                         {following 

@@ -1,15 +1,20 @@
 import React from 'react';
-import { Text, View, Button } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
+import styled from "styled-components/native";
+import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { AppLogo, AppLogoContainer, AppName, LoginButton, RegisterButton, RegistrationContaier } from '../../Styles';
 
 export default function LandingScreen({navigation}) {
     return (
-        <View style={{flex:1, justifyContent: 'center'}}>
-            <Button 
-                title='Register'
-                onPress={() => navigation.navigate('Register')}/>
-            <Button 
-                title='Login'
-                onPress={() => navigation.navigate('Login')}/>
-        </View>
+        <RegistrationContaier>
+            <AppLogo name="instagram" size={70}/>
+            <RegisterButton onPress={() => navigation.navigate('Register')}>
+                <Text style={{color: 'white'}}>Register</Text>
+            </RegisterButton>
+            <LoginButton onPress={() => navigation.navigate('Login')}>
+                <Text style={{color: 'white'}}>Login</Text>
+            </LoginButton>
+        </RegistrationContaier>
     )
-} 
+}
+

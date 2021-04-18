@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Button, TextInput } from 'react-native';
+import { View, Button, TextInput, Text } from 'react-native';
 import firebase from 'firebase';
 import 'firebase/firestore';
+import { RegLogTextInput, SignButton } from '../../Styles';
 export default class RegisterScreen extends Component {
     constructor(props){
         super(props);
@@ -32,21 +33,22 @@ export default class RegisterScreen extends Component {
     }
     render(){
         return (
-            <View>
-                <TextInput 
+            <View style={{flex:1, justifyContent: "center"}}>
+                <RegLogTextInput 
                     placeholder="name" 
                     onChangeText={(name) => this.setState({ name })}/>
-                <TextInput 
+                <RegLogTextInput 
                     placeholder="email" 
                     onChangeText={(email) => this.setState({ email })}/>
-                <TextInput 
+                <RegLogTextInput 
                     placeholder="password"
                     secureTextEntry={true} 
                     onChangeText={(password) => this.setState({ password })}/>
-                <Button 
-                    onPress={() => this.onSignUp()}
-                    title='Sign up'
-                    />
+                <View style={{justifyContent: "center", height:"5%", alignItems: "center"}}>
+                    <SignButton style={{height:"100%"}} onPress={() => this.onSignUp()}>
+                        <Text style={{color: 'white'}}>Sign up</Text>
+                    </SignButton>
+                </View>
             </View>
         )
     }

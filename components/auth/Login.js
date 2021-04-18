@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { View, Button, TextInput } from 'react-native';
+import { View, Button, TextInput,Text } from 'react-native';
 import firebase from 'firebase';
+import { RegLogTextInput, SignButton } from '../../Styles';
 export class LoginScreen extends Component {
     constructor(props){
         super(props);
@@ -24,18 +25,19 @@ export class LoginScreen extends Component {
     }
     render(){
         return (
-            <View>
-                <TextInput 
+            <View style={{flex:1, justifyContent: "center"}}>
+                <RegLogTextInput 
                     placeholder="email" 
                     onChangeText={(email) => this.setState({ email })}/>
-                <TextInput 
+                <RegLogTextInput 
                     placeholder="password"
                     secureTextEntry={true} 
                     onChangeText={(password) => this.setState({ password })}/>
-                <Button 
-                    onPress={() => this.onSignUp()}
-                    title='Sign in'
-                    />
+                <View style={{justifyContent: "center", height:"5%", alignItems: "center"}}>
+                    <SignButton style={{height:"100%"}} onPress={() => this.onSignUp()}>
+                        <Text style={{color: 'white'}}>Sign in</Text>
+                    </SignButton>
+                </View>
             </View>
         )
     }

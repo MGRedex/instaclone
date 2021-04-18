@@ -1,7 +1,10 @@
 import firebase from 'firebase';
 import React, { useEffect, useState, Component } from 'react';
-import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button, TouchableOpacity, Touchable } from 'react-native';
 import { connect } from 'react-redux';
+import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { NickName, PostCreatorInfo, UserAvatar } from '../../Styles';
+
 
 export function Feed(props){
     const [posts, setPosts] = useState([])
@@ -63,21 +66,35 @@ export function Feed(props){
                 horizontal={false}
                 data={posts}
                 renderItem={({item}) => (
-                    <View style={styles.imageContainer}>
-                        <Text style={styles.container}>{item.user.name}</Text>
+                    <View style={{marginTop: 15}}>
+                        <PostCreatorInfo>
+                            <TouchableOpacity
+                            onPress={() => props.navigation.navigate("Profile", {uid: item.user.uid})}>
+                                <UserAvatar
+                                source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
+                            </TouchableOpacity>
+                            <View style={{height: "100%", marginLeft: 7}}>
+                                <NickName style={{marginTop: 4}}>{item.user.name}</NickName>
+                                <Text style={{marginTop: 3}}>{item.caption}</Text>
+                            </View>
+                        </PostCreatorInfo>
                         <Image
                         style={styles.image} 
                         source={{uri: item.downloadURL}}/>
                         {item.currentUserLike ? 
                         (
-                            <Button title="Dislike" onPress={() => 
-                                onDislikePress(item.user.uid, item.id)}/>
+                            <TouchableOpacity style={{marginLeft:2}} onPress={() => 
+                                onDislikePress(item.user.uid, item.id)}>
+                                <MarerialCommunityIcons name="heart" color="#E94D4D" size={30}/>
+                            </TouchableOpacity>
                         ) : 
                         (
-                            <Button title="Like" onPress={() => 
-                                onLikePress(item.user.uid, item.id)}/>
+                            <TouchableOpacity style={{marginLeft:2}} onPress={() => 
+                                onLikePress(item.user.uid, item.id)}>
+                                <MarerialCommunityIcons name="heart-outline" color="#E94D4D" size={30}/>
+                            </TouchableOpacity>
                         )}
-                        <Text
+                        <Text style={{marginLeft: 5}}
                         onPress={() => props.navigation.navigate(
                             "Comments", 
                             {
@@ -105,7 +122,8 @@ const styles = StyleSheet.create({
         flex: 1
     },
     imageContainer:{
-        flex: 1/3
+        flex: 1/3,
+        marginTop: 15
     },
     image:{
         flex:1,

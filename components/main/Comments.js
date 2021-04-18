@@ -1,10 +1,13 @@
 import React from "react";
-import { View, Text, Image, FlatList, Button, TextInput } from "react-native";
+import { View, Text, Image, FlatList, Button, TextInput, Touchable } from "react-native";
 import { useState, useEffect } from "react";
 import firebase from "firebase";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUsersData } from "../../redux/actions/index";
+import { NickName, UserAvatarComments } from "../../Styles";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 require("firebase/firestore")
 
 export function Comments(props){
@@ -38,8 +41,8 @@ export function Comments(props){
                 .collection("userPosts")
                 .doc(props.route.params.postId)
                 .collection("comments")
-                .get()
-                .then((snapshot) => {
+                .orderBy("createdAt")
+                .onSnapshot((snapshot) => {
                     let comments = snapshot.docs.map((doc) => {
                         let data = doc.data()
                         let id = doc.id
@@ -63,7 +66,8 @@ export function Comments(props){
             .collection("comments")
             .add({
                 creator: firebase.auth().currentUser.uid,
-                text: userComment
+                text: userComment,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             })
     }
     return(
@@ -73,18 +77,39 @@ export function Comments(props){
             horizontal={false}
             data={comments}
             renderItem={({item}) => (
-                <View style={{flex:1}}>
-                    {item.user !== undefined ? (<Text>{item.user.name}</Text>) : null}
-                    <Text>{item.text}</Text>
+                <View style={{flex:1, marginTop:10, marginLeft:4}}>
+                    <View style={{flexDirection:"row"}}>
+                        <UserAvatarComments
+                            source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
+                        <View style={{marginLeft:5, width:"85%"}}>
+                            {item.user !== undefined ? (<NickName>{item.user.name}</NickName>) : null}
+                            <Text>{item.text}</Text>
+                        </View>
+                    </View>
                 </View>
             )}/>
-            <View>
-                <TextInput placeholder="Write a comment" onChangeText={(text) => setUserComment(text)}/>
-                <Button
-                title="Send"
-                onPress={
-                    () => onCommentSend()
-                }/>
+            <View style={{
+                flexDirection:"row", 
+                alignItems:"flex-end"}}>
+                <UserAvatarComments
+                    style={{
+                        margin:4,
+                        flex:1}}
+                    source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
+                <TextInput
+                    multiline={true}
+                    style={{
+                        flex:7,
+                        width: "77%",
+                        height: "100%"}}
+                    placeholder="Write a comment" 
+                    onChangeText={(text) => setUserComment(text)}/>
+                <TouchableOpacity
+                    style={{
+                        margin:4}}
+                    onPress={() => onCommentSend()}>
+                    <MarerialCommunityIcons name="send" color="#1A1A1A" size={30}/>
+                </TouchableOpacity>
             </View>
         </View>
     )

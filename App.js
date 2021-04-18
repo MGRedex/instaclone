@@ -15,6 +15,8 @@ import AddScreen from './components/main/Add';
 import LoginScreen from './components/auth/Login';
 import SaveScreen from './components/main/Save';
 import CommentsScreen from './components/main/Comments';
+import { AppLogo, AppLogoContainer, AppName } from './Styles';
+
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -62,9 +64,9 @@ export default class App extends Component {
     const { loggedIn, loaded } = this.state;
     if (!loaded){
       return(
-        <View style={{flex:1, justifyContent: 'center'}}>
-          <Text>Loading</Text>
-        </View>
+        <AppLogoContainer>
+          <AppLogo name="instagram" size={70}/>
+        </AppLogoContainer>
       )
     }
     if (!loggedIn){
@@ -72,8 +74,8 @@ export default class App extends Component {
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Landing">
             <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }}/> 
-            <Stack.Screen name="Register" component={RegisterScreen}/>
-            <Stack.Screen name="Login" component={LoginScreen}/>
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }}/>
+            <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
           </Stack.Navigator>
         </NavigationContainer>
       );
@@ -93,12 +95,3 @@ export default class App extends Component {
       )
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});

@@ -1,14 +1,19 @@
 import firebase from 'firebase';
 import React, { useEffect, useState, Component } from 'react';
-import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button, Touchable } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
-import { NickName, UserProfileAvatar, UserProfileMainInfo } from '../../Styles';
+import { NickName, ProfileButton, ProfileButtonsContainer, UserProfileAvatar, UserProfileMainInfo } from '../../Styles';
 
 export function Profile(props){
     const [user, setUser] = useState([])
     const [userPosts, setUserPosts] = useState(null)
     const [contentIsLoaded, setContentIsLoaded] = useState(false)
     const [following, setFollowing] = useState(false)
+    const FollowersPlaceholder = 1327026
+    const FollowingPlaceholder = 4489
+    const Thousand = 1000
+    const Million = 1000000
 
     useEffect(() => {
         const { currentUser, posts } = props
@@ -105,29 +110,57 @@ export function Profile(props){
                             width:"100%",
                             flexDirection:"row",
                             justifyContent:"space-between"}}>
-                            <Text>{userPosts.length} Posts</Text>
+                            {userPosts.length > Million ?
+                            (<Text>{(userPosts.length/Million).toFixed(1)}M Posts</Text>) :
+                            userPosts.length > Thousand ?
+                            (<Text>{(userPosts.length/Thousand).toFixed(1)}K Posts</Text>) :
+                            (<Text>{userPosts.length} Posts</Text>)
+                            }
                             <Text>|</Text>
-                            <Text>2 Followers</Text>
+                            {FollowersPlaceholder > Million ? 
+                            (<Text>{(FollowersPlaceholder/Million).toFixed(1)}M Followers</Text>) :
+                            FollowersPlaceholder > Thousand ?
+                            (<Text>{(FollowersPlaceholder/Thousand).toFixed(1)}K Followers</Text>) :
+                            (<Text>{FollowersPlaceholder} Followers</Text>)
+                            }
                             <Text>|</Text>
-                            <Text style={{marginRight:8}}>3 Subscribes</Text>
+                            {FollowingPlaceholder > Million ? 
+                            (<Text style={{marginRight:8}}>
+                                {(FollowingPlaceholder/Million).toFixed(1)}M Following</Text>) :
+                            FollowingPlaceholder > Thousand ?
+                            (<Text style={{marginRight:8}}>
+                                {(FollowingPlaceholder/Thousand).toFixed(1)}K Following</Text>) :
+                            (<Text style={{marginRight:8}}>
+                                {FollowingPlaceholder} Following</Text>)
+                            }
                         </View>
                     </View>
                 </View>
-                {props.route.params.uid !== firebase.auth().currentUser.uid ? ( 
-                    <View>
-                        {following 
-                        ?(<Button 
-                            title="Unfollow"
-                            onPress={() => onUnfollow()}/>)
-                        :(<Button 
-                            title="Follow"
-                            onPress={() => onFollow()}/>)}
-                    </View>) 
-                : (<Button 
-                    title="Logout"
-                    onPress={() => onLogout()}/>)
-                }  
             </View>
+            {props.route.params.uid !== firebase.auth().currentUser.uid ? ( 
+                    <ProfileButtonsContainer>
+                        {following 
+                        ?(<ProfileButton 
+                            onPress={() => onUnfollow()}>
+                                <Text>Unfollow</Text>
+                            </ProfileButton>)
+                        :(<ProfileButton 
+                            onPress={() => onFollow()}>
+                                <Text>Follow</Text>
+                            </ProfileButton>)}
+                        <ProfileButton>
+                            <Text>Message</Text>
+                        </ProfileButton>
+                    </ProfileButtonsContainer>) 
+                : (<ProfileButtonsContainer>
+                        <ProfileButton onPress={() => onLogout()}>
+                            <Text>Logout</Text>
+                        </ProfileButton>
+                        <ProfileButton>
+                            <Text>Statistic</Text>
+                        </ProfileButton>
+                    </ProfileButtonsContainer>)
+                } 
             <View style={styles.userGallery}>
                 <FlatList
                 numColumns={3}
@@ -154,7 +187,7 @@ const styles = StyleSheet.create({
         margin: 20
     },
     userGallery: {
-        flex: 1
+        flex: 11
     },
     imageContainer:{
         flex: 1/3

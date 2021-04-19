@@ -80,3 +80,18 @@ export const NickName = styled.Text`
 export const UserProfileMainInfo = styled.View`
     flex-direction: row;
 `
+export const ProfileButtonsContainer = styled.View`
+    flex-direction: row;
+    flex: 1;
+    justify-content: space-around;
+    margin: 10px;
+`
+export const ProfileButton = styled.TouchableOpacity`
+    width: 40%;
+    height: 90%;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    border-color: black;
+    border-width: 1.3px;
+`

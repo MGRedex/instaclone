@@ -14,6 +14,7 @@ export function Comments(props){
     const [comments, setComments] = useState([])
     const [postId, setPostId] = useState("")
     const [userComment, setUserComment] = useState("")
+    const [CommentInputRef, setCommentInputRef] = useState(null)
 
     useEffect(() => {
         function matchUserToComment(comments){
@@ -58,6 +59,7 @@ export function Comments(props){
     }, [props.route.params.postId, props.users])
 
     const onCommentSend = () => {
+        CommentInputRef.clear()
         firebase.firestore()
             .collection("posts")
             .doc(props.route.params.uid)
@@ -97,6 +99,7 @@ export function Comments(props){
                         flex:1}}
                     source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                 <TextInput
+                    ref={CommentInputRef => {setCommentInputRef(CommentInputRef)}}
                     multiline={true}
                     style={{
                         flex:7,

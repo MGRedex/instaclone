@@ -1,0 +1,14 @@
+./frontend/node_modules/**/*
+.expo/*
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+./backend/Pipfile.lock
+./backend/inst_back/db.sqlite3
+# macOS
+.DS_Store

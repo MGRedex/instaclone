@@ -29,12 +29,12 @@ class Post(models.Model):
         auto_now_add=True)
 
     author = models.ForeignKey(
-        "Profile",
+        "profile",
         related_name=("posts"), 
         on_delete=models.CASCADE)
 
     likes = models.ManyToManyField(
-        "Profile",
+        "profile",
         related_name=("liked_posts"),
         blank=True)
 

@@ -9,7 +9,6 @@ import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ProfileScreen from './main/Profile';
 import AddScreen from './main/Add';
 import SearchScreen from './main/Search';
-import firebase from 'firebase';
 
 const Tab = createMaterialBottomTabNavigator()
 const EmptyScreen = () => {
@@ -17,10 +16,7 @@ const EmptyScreen = () => {
 }
 export class MainScreen extends Component{
     componentDidMount(){
-        this.props.clearData()
-        this.props.fetchUser()
-        this.props.fetchUserPosts()
-        this.props.fetchUserFollowing()
+       
     }
     render(){
         return(
@@ -35,7 +31,7 @@ export class MainScreen extends Component{
                         <MarerialCommunityIcons name="home" color={color} size={26}/>
                     )
                 }}/>
-                <Tab.Screen name="Search" component={SearchScreen}
+                {/* <Tab.Screen name="Search" component={SearchScreen}
                 options={{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="magnify" color={color} size={26}/>
@@ -52,7 +48,7 @@ export class MainScreen extends Component{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="plus-box" color={color} size={26}/>
                     )
-                }}/>
+                }}/> */}
                 <Tab.Screen name="Profile" component={ProfileScreen}
                 listeners={({ navigation })=>({
                     tabPress: event => {
@@ -73,6 +69,6 @@ export class MainScreen extends Component{
 const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser
 })
-const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser,fetchUserPosts,fetchUserFollowing, clearData}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

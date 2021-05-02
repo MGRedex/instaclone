@@ -6,7 +6,6 @@ import {
 
     const initialState = {
     users: [],
-    feed: [],
     usersFollowingLoaded: 0
 }
 

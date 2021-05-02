@@ -16,36 +16,21 @@ export function Feed(props){
             setContentIsLoaded(true)
             if (props.usersFollowingLoaded === props.following.length && props.following.length !== 0){
                 props.feed.sort(function (x,y){
-                    return x.creation - y.creation
+                    return x.created - y.created
                 })
     
                 setPosts(props.feed)
-                console.log(props.feed)
             }
         }
         
     }, [props.usersFollowingLoaded, props.following, props.feed])
 
     const onLikePress = (uid, postId) => {
-        firebase.firestore()
-        .collection("posts")
-        .doc(uid)
-        .collection("userPosts")
-        .doc(postId)
-        .collection("likes")
-        .doc(firebase.auth().currentUser.uid)
-        .set({})
+        
     }
 
     const onDislikePress = (uid, postId) => {
-        firebase.firestore()
-        .collection("posts")
-        .doc(uid)
-        .collection("userPosts")
-        .doc(postId)
-        .collection("likes")
-        .doc(firebase.auth().currentUser.uid)
-        .delete()
+        
     }
 
     if(!contentIsLoaded){

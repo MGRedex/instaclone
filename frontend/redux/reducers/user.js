@@ -2,15 +2,24 @@ import {
     USER_STATE_CHANGE, 
     USER_POSTS_STATE_CHANGE,
     USER_FOLLOWING_STATE_CHANGE,
+    USER_AUTH_STATE_CHANGE,
     CLEAR_DATA } from '../constants';
 
 const initialState = {
     currentUser: null,
-    posts: []
+    loggedIn: false,
+    following: [],
+    posts: [],
+    feed: [],
 }
 
 export const user = (state = initialState, action) => {
     switch(action.type){
+        case USER_AUTH_STATE_CHANGE:
+            return{
+                ...state,
+                loggedIn: action.loggedIn
+            }
         case USER_STATE_CHANGE:
             return {
                 ...state,

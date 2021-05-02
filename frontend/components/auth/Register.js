@@ -1,42 +1,38 @@
 import React, { Component } from 'react';
 import { View, Button, TextInput, Text } from 'react-native';
-import firebase from 'firebase';
-import 'firebase/firestore';
 import { RegLogTextInput, SignButton } from '../../Styles';
-export default class RegisterScreen extends Component {
+import { connect } from 'react-redux';
+import axios from 'axios';
+class RegisterScreen extends Component {
     constructor(props){
         super(props);
 
         this.state = {
             email:'',
             password:'',
-            name: '',
+            login: '',
         }
 
         this.onSignUp = this.onSignUp.bind(this)
     }
     onSignUp(){
-        const { email, password, name } = this.state
-        firebase.auth().createUserWithEmailAndPassword(email, password)
-        .then((result) => {
-            firebase.firestore().collection("users")
-            .doc(firebase.auth().currentUser.uid)
-            .set({
-                name,
-                email
-            })
-            console.log(result)
-        })
-        .catch((error) => {
-            console.log(error)
-        })
+        const { email, password, login } = this.state
+        axios.post('http://0.0.0.0:8000/api/rest-auth/registration/', {
+            "username":login,
+            "email":email,
+            "password1": password,
+            "password2": password
+        }).then((response) => {
+            console.log(response)
+            this.setState({loggedIn: true})
+        }).catch((error) => {console.log(error)})
     }
     render(){
         return (
             <View style={{flex:1, justifyContent: "center"}}>
                 <RegLogTextInput 
-                    placeholder="name" 
-                    onChangeText={(name) => this.setState({ name })}/>
+                    placeholder="login" 
+                    onChangeText={(login) => this.setState({ login })}/>
                 <RegLogTextInput 
                     placeholder="email" 
                     onChangeText={(email) => this.setState({ email })}/>
@@ -53,3 +49,7 @@ export default class RegisterScreen extends Component {
         )
     }
 }
+const mapStateToProps = (state) => ({
+    loggedIn: state.userState.loggedIn
+})
+export default connect(mapStateToProps)(RegisterScreen)

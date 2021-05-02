@@ -1,5 +1,6 @@
 node_modules/
 ./backend/inst_back/db.sqlite3
+.frontend/.expo/web
 .expo/*
 npm-debug.*
 *.jks

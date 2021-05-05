@@ -2,6 +2,7 @@ node_modules/
 ./backend/inst_back/db.sqlite3
 .expo/*
 */.expo/*
+./backend/inst_back/api/migrations/
 npm-debug.*
 *.jks
 *.p8

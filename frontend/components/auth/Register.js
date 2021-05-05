@@ -17,11 +17,10 @@ class RegisterScreen extends Component {
     }
     onSignUp(){
         const { email, password, login } = this.state
-        axios.post('http://0.0.0.0:8000/api/rest-auth/registration/', {
+        axios.post('api/auth/registration/', {
             "username":login,
             "email":email,
-            "password1": password,
-            "password2": password
+            "password": password,
         }).then((response) => {
             console.log(response)
             this.setState({loggedIn: true})

@@ -3,12 +3,27 @@ from .models import *
 from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
+    def __init__(self, *args, include_password = False, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not include_password:
+            self.fields.pop('password')
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
+
+    # def update(self, instance, validated_data):
+    #     instance.username = validated_data.get('username', instance.username)
+    #     instance.email = validated_data.get('email', instance.email)
+    #     instance.password = validated_data.get('password', instance.password)
+
     class Meta:
         model = User
-        fields = ['username']
+        fields = ['username', 'password', 'email']
 
 class FollowedProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+
     class Meta:
         model = Profile
         fields = ['user']
@@ -29,5 +44,5 @@ class ProfileSerializer(serializers.ModelSerializer):
     posts = PostSerializer(include_author = False, many = True)
     class Meta:
         model = Profile
-        fields = ['email', 'user', 'following', 'posts']
+        fields = ['user', 'following', 'posts', 'id']
 

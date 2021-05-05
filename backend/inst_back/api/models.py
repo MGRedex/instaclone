@@ -8,9 +8,6 @@ class Profile(models.Model):
         related_name = ("profile"), 
         on_delete=models.CASCADE)
     
-    email = models.EmailField(
-        max_length=254)
-
     following = models.ManyToManyField(
         'self', 
         related_name=("followers"),

@@ -1,7 +1,7 @@
 node_modules/
 ./backend/inst_back/db.sqlite3
-.frontend/.expo/web
 .expo/*
+*/.expo/*
 npm-debug.*
 *.jks
 *.p8
@@ -11,6 +11,6 @@ npm-debug.*
 *.orig.*
 web-build/
 ./backend/Pipfile.lock
-./backend/inst_back/db.sqlite3
+db.sqlite3
 # macOS
 .DS_Store

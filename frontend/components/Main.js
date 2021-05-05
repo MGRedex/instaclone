@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchUser, fetchUserPosts, fetchUserFollowing, clearData } from '../redux/actions/index';
@@ -9,6 +9,7 @@ import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ProfileScreen from './main/Profile';
 import AddScreen from './main/Add';
 import SearchScreen from './main/Search';
+import axios from 'axios';
 
 const Tab = createMaterialBottomTabNavigator()
 const EmptyScreen = () => {
@@ -16,12 +17,16 @@ const EmptyScreen = () => {
 }
 export class MainScreen extends Component{
     componentDidMount(){
-       
+        const { token } = this.props
+        const { fetchUser } = this.props
+        fetchUser(token.user_id)
+         
     }
     render(){
+        const { token } = this.props
         return(
             <Tab.Navigator 
-            nitialRouteName="Feed" 
+            initialRouteName="Feed" 
             labeled={false}
             activeColor="black"
             barStyle={{backgroundColor:"white"}}>
@@ -53,7 +58,7 @@ export class MainScreen extends Component{
                 listeners={({ navigation })=>({
                     tabPress: event => {
                         event.preventDefault()
-                        navigation.navigate("Profile", {uid: firebase.auth().currentUser.uid})
+                        navigation.navigate("Profile", {uid: token.user_id})
                     }
                 })}
                 options={{
@@ -66,9 +71,10 @@ export class MainScreen extends Component{
     }
 }
 
-const mapStateToProps = (store) => ({
-    currentUser: store.userState.currentUser
+const mapStateToProps = (state) => ({
+    currentUser: state.userState.currentUser,
+    token: state.tokenState.decrypted_token,
 })
-const mapDispatchToProps = (dispatch) => bindActionCreators({}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser, clearData}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

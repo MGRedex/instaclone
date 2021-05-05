@@ -8,52 +8,46 @@ import { NickName, ProfileButton, ProfileButtonsContainer, UserProfileAvatar, Us
 export function Profile(props){
     const [user, setUser] = useState([])
     const [userPosts, setUserPosts] = useState(null)
+    const [userFollowing, setUserFollowing] = useState(null)
+    const [following, setFollowing] = useState(false)
     const [contentIsLoaded, setContentIsLoaded] = useState(false)
     const [showLoadingScreen, setShowLoadingScreen] = useState(true)
-    const [following, setFollowing] = useState(false)
     const FollowersPlaceholder = 1327026
     const FollowingPlaceholder = 4489
     const Thousand = 1000
     const Million = 1000000
+    // console.log(props)
 
     useEffect(() => {
-        const { currentUser, posts } = props
-        if (props.route.params.uid === firebase.auth().currentUser.uid){
+        const { currentUser, posts, following } = props
+        if (props.route.params.uid === props.token.user_id){
             if (currentUser !== null){
                 setContentIsLoaded(true)
+                setShowLoadingScreen(false)
             }
             setUser(currentUser)
             setUserPosts(posts)
+            setUserFollowing(following)
+            console.log(props)
         }
         else{
             setContentIsLoaded(false)
-            firebase.firestore()
-            .collection("users")
-            .doc(props.route.params.uid)
-            .get()
-            .then((snapshot) => {
-                if(snapshot.exists){
-                    setUser(snapshot.data())
-                }
-                else {
-                    console.log("does not exist")
-                }
-            })
-            firebase.firestore()
-            .collection("posts")
-            .doc(props.route.params.uid)
-            .collection("userPosts")
-            .orderBy("createdAt", "asc")
-            .get()
-            .then((snapshot) => {
-                let posts = snapshot.docs.map(doc => {
-                    const data = doc.data()
-                    const id = doc.id
-                    return {id, ...data}
-                })
-                setUserPosts(posts)
-                setContentIsLoaded(true)
-            })
+            
+            // firebase.firestore()
+            // .collection("posts")
+            // .doc(props.route.params.uid)
+            // .collection("userPosts")
+            // .orderBy("createdAt", "asc")
+            // .get()
+            // .then((snapshot) => {
+            //     let posts = snapshot.docs.map(doc => {
+            //         const data = doc.data()
+            //         const uid = doc.uid
+            //         return {uid, ...data}
+            //     })
+            //     setUserPosts(posts)
+            //     setContentIsLoaded(true)
+            // })
             
 
             if (props.following.indexOf(props.route.params.uid) > -1){
@@ -63,30 +57,21 @@ export function Profile(props){
                 setFollowing(false)
             }
         }
-    }, [props.route.params.uid, props.currentUser, props.posts, props.following])
+        
+    }, [props.route.params, props.currentUser, props.posts, props.following])
 
     const onFollow = () => {
         setShowLoadingScreen(false)
-        firebase.firestore()
-        .collection("following")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("userFollowing")
-        .doc(props.route.params.uid)
-        .set({})
+        
     }
 
     const onUnfollow = () => {
         setShowLoadingScreen(false)
-        firebase.firestore()
-        .collection("following")
-        .doc(firebase.auth().currentUser.uid)
-        .collection("userFollowing")
-        .doc(props.route.params.uid)
-        .delete()
+        
     }
 
     const onLogout = () => {
-        firebase.auth().signOut()
+        
     }
 
     if(!contentIsLoaded && showLoadingScreen){
@@ -110,9 +95,9 @@ export function Profile(props){
                         }}
                         source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                     <View style={{flex:1}}>
-                        <NickName style={{fontSize:20, marginBottom:7}}>{user.name}</NickName>
+                        <NickName style={{fontSize:20, marginBottom:7}}>{user.username}</NickName>
                         <View style={{
-                            width:"100%",
+                            wuidth:"100%",
                             flexDirection:"row",
                             justifyContent:"space-between"}}>
                             {userPosts.length > Million ?
@@ -129,20 +114,20 @@ export function Profile(props){
                             (<Text>{FollowersPlaceholder} Followers</Text>)
                             }
                             <Text>|</Text>
-                            {FollowingPlaceholder > Million ? 
+                            {userFollowing.length > Million ? 
                             (<Text style={{marginRight:8}}>
-                                {(FollowingPlaceholder/Million).toFixed(1)}M Following</Text>) :
-                            FollowingPlaceholder > Thousand ?
+                                {(userFollowing.length/Million).toFixed(1)}M Following</Text>) :
+                            userFollowing.length > Thousand ?
                             (<Text style={{marginRight:8}}>
-                                {(FollowingPlaceholder/Thousand).toFixed(1)}K Following</Text>) :
+                                {(userFollowing.length/Thousand).toFixed(1)}K Following</Text>) :
                             (<Text style={{marginRight:8}}>
-                                {FollowingPlaceholder} Following</Text>)
+                                {userFollowing.length} Following</Text>)
                             }
                         </View>
                     </View>
                 </View>
             </View>
-            {props.route.params.uid !== firebase.auth().currentUser.uid ? ( 
+            {props.route.params.uid !== props.token.user_id ? ( 
                     <ProfileButtonsContainer>
                         {following 
                         ?(<ProfileButton 
@@ -166,7 +151,7 @@ export function Profile(props){
                         </ProfileButton>
                     </ProfileButtonsContainer>)
                 } 
-            <View style={styles.userGallery}>
+            {/* <View style={styles.userGallery}>
                 <FlatList
                 numColumns={3}
                 horizontal={false}
@@ -178,7 +163,7 @@ export function Profile(props){
                         source={{uri: item.downloadURL}}/>
                     </View>
                 )}/>
-            </View>
+            </View> */}
         </View>
     )
 }
@@ -206,10 +191,13 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     }
 })
-const mapStateToProps = (state) => ({
-    currentUser: state.userState.currentUser,
-    posts: state.userState.posts,
-    following: state.userState.following
-})
+const mapStateToProps = (store) => {
+    return {
+        currentUser: store.userState.currentUser,
+        posts: store.userState.posts,
+        following: store.userState.following,
+        token: store.tokenState.decrypted_token,
+    }
+}
 
-export default connect(mapStateToProps, null)(Profile)
+export default connect(mapStateToProps)(Profile)

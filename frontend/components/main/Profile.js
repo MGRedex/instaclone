@@ -1,25 +1,33 @@
-import firebase from 'firebase';
+import { 
+    USERS_DATA_STATE_CHANGE, 
+    USERS_LIKES_STATE_CHANGE,
+    USER_FOLLOWING_STATE_CHANGE,
+    USER_FOLLOWERS_STATE_CHANGE,
+    CLEAR_DATA } from '../../redux/constants';
 import React, { useEffect, useState, Component } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button, Touchable } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { NickName, ProfileButton, ProfileButtonsContainer, UserProfileAvatar, UserProfileMainInfo } from '../../Styles';
+import axios from 'axios';
 
 export function Profile(props){
     const [user, setUser] = useState([])
     const [userPosts, setUserPosts] = useState(null)
     const [userFollowing, setUserFollowing] = useState(null)
+    const [userFollowers, setUserFollowers] = useState(null)
+
     const [following, setFollowing] = useState(false)
     const [contentIsLoaded, setContentIsLoaded] = useState(false)
     const [showLoadingScreen, setShowLoadingScreen] = useState(true)
-    const FollowersPlaceholder = 1327026
-    const FollowingPlaceholder = 4489
+
     const Thousand = 1000
     const Million = 1000000
     // console.log(props)
 
     useEffect(() => {
-        const { currentUser, posts, following } = props
+        const { currentUser, posts, following, followers, users } = props
+        const { dispatch } = props
         if (props.route.params.uid === props.token.user_id){
             if (currentUser !== null){
                 setContentIsLoaded(true)
@@ -28,46 +36,94 @@ export function Profile(props){
             setUser(currentUser)
             setUserPosts(posts)
             setUserFollowing(following)
-            console.log(props)
+            setUserFollowers(followers)
         }
         else{
             setContentIsLoaded(false)
-            
-            // firebase.firestore()
-            // .collection("posts")
-            // .doc(props.route.params.uid)
-            // .collection("userPosts")
-            // .orderBy("createdAt", "asc")
-            // .get()
-            // .then((snapshot) => {
-            //     let posts = snapshot.docs.map(doc => {
-            //         const data = doc.data()
-            //         const uid = doc.uid
-            //         return {uid, ...data}
-            //     })
-            //     setUserPosts(posts)
-            //     setContentIsLoaded(true)
-            // })
-            
 
-            if (props.following.indexOf(props.route.params.uid) > -1){
-                setFollowing(true)
+            let gettedUser = props.users.find(
+                (profile) => profile.user.id == props.route.params.uid)
+            
+            if (gettedUser === undefined){
+                axios.get(`api/userinfo/${props.route.params.uid}/`)
+                .then((response) => {
+                    gettedUser = response.data
+                    setUser(gettedUser.user)
+                    setUserPosts(gettedUser.posts)
+                    setUserFollowing(gettedUser.following)
+                    setUserFollowers(gettedUser.followers)
+                    dispatch({type: USERS_DATA_STATE_CHANGE, user: gettedUser})
+                    setContentIsLoaded(true)
+                    setShowLoadingScreen(false)
+                 })
             }
             else{
-                setFollowing(false)
+                const { currentUser } = props
+
+                setUser(gettedUser.user)
+                setUserPosts(gettedUser.posts)
+                setUserFollowing(gettedUser.following)
+                setUserFollowers(gettedUser.followers)
+            
+                if (userFollowers.find((profile) => profile.user.id == currentUser.id)){
+                    setFollowing(true)
+                }
+                else{
+                    setFollowing(false)
+                }
+                setContentIsLoaded(true)
+                setShowLoadingScreen(false)
             }
+
+            
         }
         
-    }, [props.route.params, props.currentUser, props.posts, props.following])
+    }, [props.route.params, 
+        props.currentUser, 
+        props.posts, 
+        props.following, 
+        props.followers, 
+        props.users])
 
     const onFollow = () => {
         setShowLoadingScreen(false)
+        setFollowing(true)
+        const { dispatch } = props
+        const { uid } = user
+        axios.put(`api/follow_system/${uid}/follow/`)
+        .then((response) => {
+            if(response.status == 204){
+                dispatch({type: USER_FOLLOWERS_STATE_CHANGE, followers: [currentUser]})
+                dispatch({type: USER_FOLLOWING_STATE_CHANGE, following: [user]})
+            }
+        })
+        .catch((error) => {
+            if (error.response.status == 500){
+                setFollowing(false)
+            }
+        })
         
     }
 
     const onUnfollow = () => {
         setShowLoadingScreen(false)
-        
+        setFollowing(false)
+        const { dispatch } = props
+        const { id } = user
+        axios.put(`api/follow_system/${id}/unfollow/`)
+        .then((response) => {
+            if(response.status == 204){
+                console.log(user)
+                dispatch({type: USER_FOLLOWERS_STATE_CHANGE, followers: currentUser, delete: true})
+                dispatch({type: USER_FOLLOWING_STATE_CHANGE, following: user, delete: true})
+
+            }
+        })
+        .catch((error) => {
+            if (error.response.status == 500){
+                setFollowing(true)
+            }
+        })
     }
 
     const onLogout = () => {
@@ -107,11 +163,11 @@ export function Profile(props){
                             (<Text>{userPosts.length} Posts</Text>)
                             }
                             <Text>|</Text>
-                            {FollowersPlaceholder > Million ? 
-                            (<Text>{(FollowersPlaceholder/Million).toFixed(1)}M Followers</Text>) :
-                            FollowersPlaceholder > Thousand ?
-                            (<Text>{(FollowersPlaceholder/Thousand).toFixed(1)}K Followers</Text>) :
-                            (<Text>{FollowersPlaceholder} Followers</Text>)
+                            {userFollowers.length > Million ? 
+                            (<Text>{(userFollowers.length/Million).toFixed(1)}M Followers</Text>) :
+                            userFollowers.length > Thousand ?
+                            (<Text>{(userFollowers.length/Thousand).toFixed(1)}K Followers</Text>) :
+                            (<Text>{userFollowers.length} Followers</Text>)
                             }
                             <Text>|</Text>
                             {userFollowing.length > Million ? 
@@ -196,6 +252,8 @@ const mapStateToProps = (store) => {
         currentUser: store.userState.currentUser,
         posts: store.userState.posts,
         following: store.userState.following,
+        followers: store.userState.followers,
+        users: store.usersState.users,
         token: store.tokenState.decrypted_token,
     }
 }

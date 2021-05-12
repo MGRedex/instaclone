@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser, fetchUserPosts, fetchUserFollowing, clearData } from '../redux/actions/index';
+import { fetchUser, fetchUserPosts, fetchFeed, clearData } from '../redux/actions/index';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import FeedScreen from './main/Feed';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -18,9 +18,9 @@ const EmptyScreen = () => {
 export class MainScreen extends Component{
     componentDidMount(){
         const { token } = this.props
-        const { fetchUser } = this.props
+        const { fetchUser, fetchFeed } = this.props
         fetchUser(token.user_id)
-         
+        fetchFeed()
     }
     render(){
         const { token } = this.props
@@ -75,6 +75,6 @@ const mapStateToProps = (state) => ({
     currentUser: state.userState.currentUser,
     token: state.tokenState.decrypted_token,
 })
-const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser, clearData}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser, fetchFeed, clearData}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);

@@ -9,5 +9,7 @@ urlpatterns = [
     path('auth/rest-auth/', include('rest_auth.urls')),
     path('userinfo/<int:pk>/', UserInfoDetail.as_view(), name="user_info"),
     path('feed/', Feed.as_view(), name="feed"),
+    path('feed/<int:pk>/<str:action>/', LikeDislike.as_view(), name="likedislike"),
+    path('follow_system/<int:pk>/<str:action>/', FollowUnfollow.as_view(), name="followunfollow"),
     # path('followedusersinfo/<int:pk>/', FollowedUsersView.as_view(), "followedusers"),
 ]

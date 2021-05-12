@@ -58,7 +58,6 @@ class App extends Component {
       return(<View><Text></Text></View>)
     }
     return(
-      // <View><Text>Logged in</Text></View>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Main">
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }}/>

@@ -20,12 +20,45 @@ class UserInfoDetail(APIView):
         serializer = ProfileSerializer(model)
         return Response(serializer.data)
 
+class LikeDislike(APIView):
+    permission_classes = (IsAuthenticated,)
+    def put(self, request, pk, action):
+        if action == 'like':
+            post = Post.objects.get(id = pk)
+            user_profile = Profile.objects.get(user__id = request.user.id)
+            post.likes.add(user_profile)
+            return Response(status = 204)
+        elif action == 'dislike':
+            post = Post.objects.get(id = pk)
+            user_profile = Profile.objects.get(user__id = request.user.id)
+            post.likes.remove(user_profile)
+            return Response(status = 204)
+        else:
+            return Response(status = 400)
+
+class FollowUnfollow(APIView):
+    permission_classes = (IsAuthenticated,)
+    def put(self, request, pk, action):
+        if action == 'follow':
+            following_profile = Profile.objects.get(user__id = pk)
+            user_profile = Profile.objects.get(user__id = request.user.id)
+            user_profile.following.add(following_profile)
+            return Response(status = 204)
+        elif action == 'unfollow':
+            following_profile = Profile.objects.get(user__id = pk)
+            user_profile = Profile.objects.get(user__id = request.user.id)
+            user_profile.following.remove(following_profile)
+            return Response(status = 204)
+        else:
+            return Response(status = 400)
+
 class Feed(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request):
-        user_profile = Profile.objects.get(id=request.user.id)
+        user_profile = Profile.objects.get(user__id=2)
         all_posts = [following_user.posts.all() for following_user in user_profile.following.all()]
         all_posts = reduce(lambda all_posts,posts: all_posts.union(posts), all_posts)
+        all_posts = all_posts.order_by('-created')
         serializer = PostSerializer(all_posts, many=True)
         return Response(serializer.data)
 

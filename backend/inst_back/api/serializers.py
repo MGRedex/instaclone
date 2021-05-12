@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'email']
+        fields = ['username', 'password', 'email', 'id']
 
 class FollowedProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -36,13 +36,20 @@ class PostSerializer(serializers.ModelSerializer):
     author = FollowedProfileSerializer()
     class Meta:
         model = Post
-        fields = ['caption', 'created', 'author']
+        fields = ['caption', 'created', 'author', 'id', 'content']
+
+class LikedPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['id']
         
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
     following = FollowedProfileSerializer(many=True)
+    followers = FollowedProfileSerializer(many=True)
     posts = PostSerializer(include_author = False, many = True)
+    liked_posts = LikedPostSerializer(many = True)
     class Meta:
         model = Profile
-        fields = ['user', 'following', 'posts', 'id']
+        fields = ['user', 'following', 'posts', 'followers', 'liked_posts']
 

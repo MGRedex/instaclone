@@ -4,6 +4,8 @@ import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button, Tou
 import { connect } from 'react-redux';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { NickName, PostCreatorInfo, UserAvatar } from '../../Styles';
+import axios from 'axios';
+import { USER_FEED_LIKES_STATE_CHANGE } from '../../redux/constants'
 
 
 export function Feed(props){
@@ -12,25 +14,39 @@ export function Feed(props){
 
 
     useEffect(() => {
-        if (props.following !== undefined && props.feed !== undefined){
+        const { dispatch, currentUser } = props
+        if (props.feed !== undefined){
             setContentIsLoaded(true)
-            if (props.usersFollowingLoaded === props.following.length && props.following.length !== 0){
-                props.feed.sort(function (x,y){
-                    return x.created - y.created
-                })
-    
-                setPosts(props.feed)
-            }
+            setPosts(props.feed)
         }
-        
-    }, [props.usersFollowingLoaded, props.following, props.feed])
+    }, [props.feed])
 
-    const onLikePress = (uid, postId) => {
-        
+    const onLikePress = (postId) => {
+        const { dispatch } = props
+        dispatch({type: USER_FEED_LIKES_STATE_CHANGE, postId, currentUserLike: true})
+        axios.put(`api/feed/${postId}/like/`)
+        .then((response) => {
+            if(response.status == 204){return}
+        })
+        .catch((error) => {
+            if (error.response.status == 500){
+                dispatch({type: USER_FEED_LIKES_STATE_CHANGE, postId, currentUserLike: false})
+            }
+        })
     }
 
-    const onDislikePress = (uid, postId) => {
-        
+    const onDislikePress = (postId) => {
+        const { dispatch } = props
+        dispatch({type: USER_FEED_LIKES_STATE_CHANGE, postId, currentUserLike: false})
+        axios.put(`api/feed/${postId}/dislike/`)
+        .then((response) => {
+            if(response.status == 204){return}
+        })
+        .catch((error) => {
+            if (error.response.status == 500){
+                dispatch({type: USER_FEED_LIKES_STATE_CHANGE, postId, currentUserLike: true})
+            }
+        })
     }
 
     if(!contentIsLoaded){
@@ -54,28 +70,35 @@ export function Feed(props){
                     <View style={{marginTop: 15}}>
                         <PostCreatorInfo>
                             <TouchableOpacity
-                            onPress={() => props.navigation.navigate("Profile", {uid: item.user.uid})}>
+                            onPress={() => props.navigation.navigate("Profile", {uid: item.author.user.id})}>
                                 <UserAvatar
                                 source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                             </TouchableOpacity>
                             <View style={{height: "100%", marginLeft: 7}}>
-                                <NickName style={{marginTop: 4}}>{item.user.name}</NickName>
+                                <NickName style={{marginTop: 4}}>{item.author.user.username}</NickName>
                                 <Text style={{marginTop: 3}}>{item.caption}</Text>
                             </View>
                         </PostCreatorInfo>
-                        <Image
-                        style={styles.image} 
-                        source={{uri: item.downloadURL}}/>
+                        {(item.content !== null) ? 
+                        (
+                            <Image
+                            style={styles.image} 
+                            source={{uri: axios.defaults.baseURL+item.content}}/>
+                        ) : 
+                        (
+                            <View><Text>NO IMAGE</Text></View>
+                        )
+                        }
                         {item.currentUserLike ? 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onDislikePress(item.user.uid, item.id)}>
+                                onDislikePress(item.id)}>
                                 <MarerialCommunityIcons name="heart" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         ) : 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onLikePress(item.user.uid, item.id)}>
+                                onLikePress(item.id)}>
                                 <MarerialCommunityIcons name="heart-outline" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         )}
@@ -121,9 +144,7 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (state) => ({
     currentUser: state.userState.currentUser,
-    following: state.userState.following,
-    feed: state.usersState.feed,
-    usersFollowingLoaded: state.usersState.usersFollowingLoaded
+    feed: state.userState.feed,
 })
 
-export default connect(mapStateToProps, null)(Feed)
+export default connect(mapStateToProps)(Feed)

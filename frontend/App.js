@@ -17,6 +17,8 @@ import axios from 'axios';
 import thunk from 'redux-thunk';
 import rootReducer from './redux/reducers/index';
 import { createStore, applyMiddleware } from 'redux';
+import * as SecureStore from 'expo-secure-store';
+import { GetAccessToken } from './components/auth/Token';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 axios.defaults.baseURL = 'http://192.168.1.104:8000'
@@ -35,7 +37,6 @@ class App extends Component {
   }
   render(){
     const { loggedIn } = this.props;
-    const { token } = this.props
     if (false){
       return(
         <AppLogoContainer>
@@ -54,16 +55,13 @@ class App extends Component {
         </NavigationContainer>
       );
     }
-    if (token === null){
-      return(<View><Text></Text></View>)
-    }
     return(
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Main">
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }}/>
-            {/* <Stack.Screen name="Add" component={AddScreen}/>
+            <Stack.Screen name="Add" component={AddScreen}/>
             <Stack.Screen name="Save" component={SaveScreen}/>
-            <Stack.Screen name="Comments" component={CommentsScreen}/> */}
+            {/* <Stack.Screen name="Comments" component={CommentsScreen}/> */}
           </Stack.Navigator>
         </NavigationContainer>
       )
@@ -71,7 +69,6 @@ class App extends Component {
 }
 const mapStateToProps = (state) => ({
   loggedIn: state.userState.loggedIn,
-  token: state.tokenState.decrypted_token,
 })
 App = connect(mapStateToProps)(App)
 const AppWithStore = () => {

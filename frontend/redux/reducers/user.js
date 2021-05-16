@@ -5,7 +5,7 @@ import {
     USER_FOLLOWERS_STATE_CHANGE,
     USER_FEED_STATE_CHANGE,
     USER_AUTH_STATE_CHANGE,
-    CLEAR_DATA,
+    CLEAR_USER_DATA,
     USER_LIKED_POSTS_STATE_CHANGE,
     USER_FEED_LIKES_STATE_CHANGE } from '../constants';
 
@@ -37,13 +37,12 @@ export const user = (state = initialState, action) => {
                 posts: action.posts
             }
         case USER_FOLLOWING_STATE_CHANGE:
+            console.log("-------------userFollowing-------------")
             if (action.delete){
-                console.log('works')
-                console.log(action.following)
-                console.log(state)
+                console.log(state.following)
                 return {
                     ...state,
-                    following: state.following.filter((profile) => profile.user.id != action.following.id)
+                    following: state.following.filter((followingProfile) => followingProfile.user.id != action.following.id)
                 }
             }
             return {
@@ -54,7 +53,7 @@ export const user = (state = initialState, action) => {
             if (action.delete){
                 return {
                     ...state,
-                    following: state.followers.filter((profile) => profile.user.id != action.followers.id)
+                    followers: state.followers.filter((followingProfile) => followingProfile.user.id != action.followers.id)
                 }
             }
             return {
@@ -80,8 +79,8 @@ export const user = (state = initialState, action) => {
                     post
                 )
             }
-        case CLEAR_DATA:
-            return initialState
+        case CLEAR_USER_DATA:
+            return {...initialState, loggedIn: true}
         default:
             return state
     }

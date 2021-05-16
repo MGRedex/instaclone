@@ -8,16 +8,11 @@ import {
     USERS_DATA_STATE_CHANGE,
     USERS_POSTS_STATE_CHANGE,
     USERS_LIKES_STATE_CHANGE,
-    CLEAR_DATA,
+    CLEAR_USER_DATA,
+    CLEAR_USERS_DATA,
     USER_LIKED_POSTS_STATE_CHANGE} from '../constants/index'
 
 import axios from 'axios';
-
-export function clearData(){
-    return ((dispatch) => {
-        dispatch({type: CLEAR_DATA, })
-    })
-}
 
 export function fetchUser(id){
     return ((dispatch) => {
@@ -51,6 +46,13 @@ export function fetchFeed(){
             dispatch({type: USER_FEED_STATE_CHANGE, feed: data})
             
         })
+    })
+}
+
+export function clearData(){
+    return ((dispatch) => {
+        dispatch({type: CLEAR_USER_DATA})
+        dispatch({type: CLEAR_USERS_DATA})
     })
 }
 

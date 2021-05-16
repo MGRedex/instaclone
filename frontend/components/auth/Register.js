@@ -3,6 +3,9 @@ import { View, Button, TextInput, Text } from 'react-native';
 import { RegLogTextInput, SignButton } from '../../Styles';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { SetJWT } from './Token';
+import { USER_AUTH_STATE_CHANGE } from '../../redux/constants/';
+
 class RegisterScreen extends Component {
     constructor(props){
         super(props);
@@ -17,13 +20,14 @@ class RegisterScreen extends Component {
     }
     onSignUp(){
         const { email, password, login } = this.state
+        const { dispatch } = this.props
         axios.post('api/auth/registration/', {
             "username":login,
             "email":email,
             "password": password,
         }).then((response) => {
-            console.log(response)
-            this.setState({loggedIn: true})
+            SetJWT(response.data)
+            dispatch({type: USER_AUTH_STATE_CHANGE, loggedIn: true})
         }).catch((error) => {console.log(error)})
     }
     render(){

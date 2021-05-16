@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { fetchUser, fetchUserPosts, fetchFeed, clearData } from '../redux/actions/index';
+import { fetchUser, fetchFeed, clearData } from '../redux/actions/index';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import FeedScreen from './main/Feed';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -10,6 +10,9 @@ import ProfileScreen from './main/Profile';
 import AddScreen from './main/Add';
 import SearchScreen from './main/Search';
 import axios from 'axios';
+import { GetAccessToken } from './auth/Token';
+import jwt_decode from 'jwt-decode';
+import * as SecureStore from 'expo-secure-store';
 
 const Tab = createMaterialBottomTabNavigator()
 const EmptyScreen = () => {
@@ -17,13 +20,18 @@ const EmptyScreen = () => {
 }
 export class MainScreen extends Component{
     componentDidMount(){
-        const { token } = this.props
-        const { fetchUser, fetchFeed } = this.props
-        fetchUser(token.user_id)
+        const { fetchUser, fetchFeed, clearData } = this.props
+        clearData()
+        GetAccessToken().then(
+            (token) => {
+                let token_decoded = jwt_decode(token)
+                fetchUser(token_decoded.user_id)
+            }
+        )
         fetchFeed()
     }
     render(){
-        const { token } = this.props
+        const { currentUser } = this.props
         return(
             <Tab.Navigator 
             initialRouteName="Feed" 
@@ -41,7 +49,7 @@ export class MainScreen extends Component{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="magnify" color={color} size={26}/>
                     )
-                }}/>
+                }}/> */}
                 <Tab.Screen name="AddContainer" component={EmptyScreen}
                 listeners={({ navigation })=>({
                     tabPress: event => {
@@ -53,12 +61,12 @@ export class MainScreen extends Component{
                     tabBarIcon: ({ size, color }) => (
                         <MarerialCommunityIcons name="plus-box" color={color} size={26}/>
                     )
-                }}/> */}
+                }}/>
                 <Tab.Screen name="Profile" component={ProfileScreen}
                 listeners={({ navigation })=>({
                     tabPress: event => {
                         event.preventDefault()
-                        navigation.navigate("Profile", {uid: token.user_id})
+                        navigation.navigate("Profile", {uid: currentUser.id})
                     }
                 })}
                 options={{
@@ -73,7 +81,6 @@ export class MainScreen extends Component{
 
 const mapStateToProps = (state) => ({
     currentUser: state.userState.currentUser,
-    token: state.tokenState.decrypted_token,
 })
 const mapDispatchToProps = (dispatch) => bindActionCreators({fetchUser, fetchFeed, clearData}, dispatch)
 

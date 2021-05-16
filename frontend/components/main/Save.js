@@ -1,54 +1,28 @@
 import React, { useState } from 'react'; 
 import { View, Image, TextInput, Text, Button } from 'react-native';
-import firebase from 'firebase';
-require('firebase/firestore');
-require('firebase/firebase-storage');
+import axios from 'axios';
+import FormData from 'form-data';
 
 export default function Save({navigation, route}){
     const [caption, setCaption] = useState("")
     const uploadImage = async () => {
-        const uri = route.params.image
-        const response = await fetch(uri)
-        const blob = await response.blob()
-        const childPath = `post/${firebase.auth().currentUser.uid}/${Math.random().toString(36)}`
 
-        const task = firebase
-        .storage()
-        .ref()
-        .child(childPath)
-        .put(blob)
+        let uri = route.params.image
+        let formData = new FormData()
+        let filename = uri.split('/').pop()
 
-        const taskProgress = (snapshot) => {
-            console.log(`transferred: ${snapshot.bytesTransferred}`)
-        }
+        formData.append('content', {uri, name: filename, type: 'image/jpg'})
+        formData.append('caption', `${caption}`)
 
-        const taskCompleted = () => {
-            task.snapshot.ref.getDownloadURL().then((snapshot) => {
-                savePostData(snapshot);
-                console.log(snapshot)
-            })
-        }
-
-        const taskError = (snapshot) => {
-            console.log(snapshot)
-        }
-
-        task.on("state_changed", taskProgress, taskError, taskCompleted)
-
-        const savePostData = (downloadURL) => {
-            firebase.firestore()
-            .collection('posts')
-            .doc(firebase.auth().currentUser.uid)
-            .collection('userPosts')
-            .doc(`${Math.random().toString(36)}`)
-            .set({
-                downloadURL,
-                caption,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then((function(){
-                navigation.popToTop()
-            }))
-        }
+        axios.post('api/create_post/', 
+        data = formData,
+        {
+            headers: {
+                "content-type": "multipart/form-data"
+            }
+        })
+        .then((response) => (navigation.navigate("Feed")))
+        .catch((error) => console.log(error.response.data))
     }
     return(
         <View style={{flex:1}}>

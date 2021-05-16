@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
 from .models import *
@@ -59,8 +60,20 @@ class Feed(APIView):
         all_posts = [following_user.posts.all() for following_user in user_profile.following.all()]
         all_posts = reduce(lambda all_posts,posts: all_posts.union(posts), all_posts)
         all_posts = all_posts.order_by('-created')
-        serializer = PostSerializer(all_posts, many=True)
+        serializer = GetPostSerializer(all_posts, many=True)
         return Response(serializer.data)
+
+class CreatePost(APIView):
+    permission_classes = (IsAuthenticated,)
+    parsers = (MultiPartParser,)
+    def post(self, request):
+        serializer = CreatePostSerializer(data = request.data)
+        if serializer.is_valid():
+            post_author = Profile.objects.get(user__id = request.user.id)
+            post = serializer.save(author=post_author) 
+            return Response(status = 200)
+        else:
+            return Response(serializer._errors, status = 400)
 
 class UserRegister(APIView):
     def post(self, request):
@@ -75,3 +88,15 @@ class UserRegister(APIView):
             },status=200)
         else:
             return Response(serializer._errors, status = 400)
+
+class UserLogout(APIView):
+    permission_classes = (IsAuthenticated,)
+    def post(self, request):
+        try:
+            token = RefreshToken(request.data['refresh_token'])
+            token.blacklist()
+
+            return Response(status = 205)
+        except Exception as e:
+            return Response(status = 400)
+

@@ -14,7 +14,6 @@ export function Feed(props){
 
 
     useEffect(() => {
-        const { dispatch, currentUser } = props
         if (props.feed !== undefined){
             setContentIsLoaded(true)
             setPosts(props.feed)
@@ -70,7 +69,7 @@ export function Feed(props){
                     <View style={{marginTop: 15}}>
                         <PostCreatorInfo>
                             <TouchableOpacity
-                            onPress={() => props.navigation.navigate("Profile", {uid: item.author.user.id})}>
+                            onPress={() => props.navigation.navigate("Profile", {uid: item.author.user.id.toString()})}>
                                 <UserAvatar
                                 source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                             </TouchableOpacity>
@@ -92,23 +91,20 @@ export function Feed(props){
                         {item.currentUserLike ? 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onDislikePress(item.id)}>
+                                onDislikePress(item.id.toString())}>
                                 <MarerialCommunityIcons name="heart" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         ) : 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onLikePress(item.id)}>
+                                onLikePress(item.id.toString())}>
                                 <MarerialCommunityIcons name="heart-outline" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         )}
                         <Text style={{marginLeft: 5}}
                         onPress={() => props.navigation.navigate(
                             "Comments", 
-                            {
-                                postId: item.id,
-                                uid: item.user.uid
-                                })}>
+                            {postId: item.id.toString()})}>
                             View all comments...
                         </Text>
                     </View>

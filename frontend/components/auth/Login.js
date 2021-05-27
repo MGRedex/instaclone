@@ -5,7 +5,7 @@ import { RegLogTextInput, SignButton } from '../../Styles';
 import { connect } from 'react-redux';
 import store from '../../redux/store/index';
 import axios from 'axios';
-import { SetJWT } from './Token';
+import { SetJWT, GetAccessToken } from './Token';
 import fetch_user from '../../redux/actions';
 import { fetchUser } from '../../redux/actions';
 import { bindActionCreators } from 'redux';
@@ -30,9 +30,14 @@ export class LoginScreen extends Component {
         }).then((response) => {
             SetJWT(response.data)
             dispatch({type: USER_AUTH_STATE_CHANGE, loggedIn: true})
+            websocket = new WebSocket(`ws://192.168.1.104:8000/ws/chat/?token=${response.data.access}`)
+            websocket.onopen = (e) => {
+                console.log("CONNECTION ACCEPTED!")
+            }
             // fetchUser(jwt.user_id)
         })
     }
+   
     render(){
         return (
             <View style={{flex:1, justifyContent: "center"}}>

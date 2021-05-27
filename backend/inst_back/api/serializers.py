@@ -21,7 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['username', 'password', 'email', 'id']
 
-class FollowedProfileSerializer(serializers.ModelSerializer):
+class OnlyUserProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
 
     class Meta:
@@ -33,7 +33,7 @@ class GetPostSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         if not include_author:
             self.fields.pop('author')
-    author = FollowedProfileSerializer()
+    author = OnlyUserProfileSerializer()
     class Meta:
         model = Post
         fields = ['caption', 'created', 'author', 'id', 'content']
@@ -53,11 +53,17 @@ class LikedPostSerializer(serializers.ModelSerializer):
         
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    following = FollowedProfileSerializer(many=True)
-    followers = FollowedProfileSerializer(many=True)
+    following = OnlyUserProfileSerializer(many=True)
+    followers = OnlyUserProfileSerializer(many=True)
     posts = GetPostSerializer(include_author = False, many = True)
     liked_posts = LikedPostSerializer(many = True)
     class Meta:
         model = Profile
         fields = ['user', 'following', 'posts', 'followers', 'liked_posts']
+
+class CommentSerializer(serializers.ModelSerializer):
+    author = OnlyUserProfileSerializer()
+    class Meta:
+        model = Comment
+        fields = ['author', 'text']
 

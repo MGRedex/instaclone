@@ -16,7 +16,6 @@ from functools import reduce
 class UserInfoDetail(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, pk):
-        print(request)
         model = Profile.objects.get(user__id = pk)
         serializer = ProfileSerializer(model)
         return Response(serializer.data)
@@ -56,7 +55,7 @@ class FollowUnfollow(APIView):
 class Feed(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request):
-        user_profile = Profile.objects.get(user__id=2)
+        user_profile = Profile.objects.get(user__id=request.user.id)
         all_posts = [following_user.posts.all() for following_user in user_profile.following.all()]
         all_posts = reduce(lambda all_posts,posts: all_posts.union(posts), all_posts)
         all_posts = all_posts.order_by('-created')
@@ -99,4 +98,12 @@ class UserLogout(APIView):
             return Response(status = 205)
         except Exception as e:
             return Response(status = 400)
+
+class PostComments(APIView):
+    # permission_classes = (IsAuthenticated,)
+    def get(self, request, post_id):
+        post = Post.objects.get(id = 5)
+        comments = post.comments.all()
+        serializer = CommentSerializer(comments, many = True)
+        return Response(serializer.data)
 

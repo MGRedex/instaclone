@@ -62,11 +62,15 @@ class Comment(models.Model):
         related_name=("comments"), 
         on_delete=models.CASCADE,
         blank = True)
-        
+
     post = models.ForeignKey(
         "post",
         related_name=("comments"), 
         on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.text[:10]}"
+
 
 
 

@@ -11,6 +11,8 @@ django-allauth = "*"
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 pillow = "*"
+channels = "*"
+channels-redis = "*"
 
 [dev-packages]
 

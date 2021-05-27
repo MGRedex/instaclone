@@ -61,7 +61,7 @@ class App extends Component {
             <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }}/>
             <Stack.Screen name="Add" component={AddScreen}/>
             <Stack.Screen name="Save" component={SaveScreen}/>
-            {/* <Stack.Screen name="Comments" component={CommentsScreen}/> */}
+            <Stack.Screen name="Comments" component={CommentsScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       )

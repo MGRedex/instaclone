@@ -7,7 +7,8 @@ import {
     USER_AUTH_STATE_CHANGE,
     CLEAR_USER_DATA,
     USER_LIKED_POSTS_STATE_CHANGE,
-    USER_FEED_LIKES_STATE_CHANGE } from '../constants';
+    USER_FEED_LIKES_STATE_CHANGE,
+    USER_FEED_COMMENTS_STATE_CHANGE } from '../constants';
 
 const initialState = {
     currentUser: null,
@@ -70,6 +71,14 @@ export const user = (state = initialState, action) => {
                 ...state,
                 feed: [...state.feed, ...action.feed]
             }
+        case USER_FEED_COMMENTS_STATE_CHANGE:
+            return {...state, feed: state.feed.map((post) => {
+                if (post.id == action.postId){
+                    post["comments"] = action.comments
+                    return post
+                }
+                return post
+            })}
         case USER_FEED_LIKES_STATE_CHANGE:
             return {
                 ...state,

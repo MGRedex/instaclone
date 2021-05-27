@@ -1,16 +1,22 @@
-"""
-ASGI config for inst_back project.
-
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/3.2/howto/deployment/asgi/
-"""
-
 import os
-
 from django.core.asgi import get_asgi_application
+from chat.middleware import JWTAuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+import chat.routing
+from chat.consumers import *
+from django.urls import re_path
 
+from channels.security.websocket import AllowedHostsOriginValidator
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'inst_back.settings')
 
-application = get_asgi_application()
+application = ProtocolTypeRouter({
+    'http': get_asgi_application(),
+    'websocket': AllowedHostsOriginValidator(
+        JWTAuthMiddlewareStack(
+        URLRouter([
+            re_path(r'^ws/chat/$', ChatConsumer.as_asgi())
+            ]
+        )
+    ))
+})
+# (?P<token>[\w.]+)/

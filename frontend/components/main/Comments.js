@@ -28,7 +28,6 @@ export function Comments(props){
         else{
             setComments(post.comments)
         }
-        console.log(props.feed)
     }, [props.feed, comments])
 
     const onCommentSend = () => {

@@ -1,10 +1,7 @@
 import axios from 'axios';
-import jwt_decode from 'jwt-decode';
-import { TOKEN_DECRYPTED_CHANGE } from '../../redux/constants/';
 import * as SecureStore from 'expo-secure-store';
 
 export async function SetJWT(jwt){
-    // const jwt_decoded = jwt_decode(jwt.access)
     axios.defaults.headers.common = {'Authorization': `Bearer ${jwt.access}`}
     await SecureStore.setItemAsync('access_token', jwt.access)
     await SecureStore.setItemAsync('refresh_token', jwt.refresh)

@@ -19,6 +19,7 @@ import rootReducer from './redux/reducers/index';
 import { createStore, applyMiddleware } from 'redux';
 import * as SecureStore from 'expo-secure-store';
 import { GetAccessToken } from './components/auth/Token';
+import ChatScreen from './components/main/Chat';
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 axios.defaults.baseURL = 'http://192.168.1.104:8000'
@@ -62,6 +63,7 @@ class App extends Component {
             <Stack.Screen name="Add" component={AddScreen}/>
             <Stack.Screen name="Save" component={SaveScreen}/>
             <Stack.Screen name="Comments" component={CommentsScreen}/>
+            <Stack.Screen name="Chat" component={ChatScreen}/>
           </Stack.Navigator>
         </NavigationContainer>
       )

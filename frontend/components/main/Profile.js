@@ -142,6 +142,20 @@ export function Profile(props){
         )
     }
 
+    // const onMessage = () => {
+    //     const { dispatch, currentUser} = props
+    //     const { id } = user
+    //     axios.put(`api/follow_system/${id}/unfollow/`)
+    //     .then((response) => {
+    //         if(response.status == 204){
+    //             dispatch({type: USERS_FOLLOWER_STATE_CHANGE, delete: true, follower: currentUser, user})
+    //             dispatch({type: USER_FOLLOWING_STATE_CHANGE, delete: true , following: user})
+
+    //         }
+    //     })
+        
+    // }
+
     if(!contentIsLoaded && showLoadingScreen){
         return(
             <View style={styles.indicator}>
@@ -206,7 +220,7 @@ export function Profile(props){
                             onPress={() => onFollow()}>
                                 <Text>Follow</Text>
                             </ProfileButton>)}
-                        <ProfileButton>
+                        <ProfileButton onPress={() => props.navigation.navigate("Chat", {oppositeUserId: props.route.params.uid})}>
                             <Text>Message</Text>
                         </ProfileButton>
                     </ProfileButtonsContainer>) 

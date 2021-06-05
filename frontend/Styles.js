@@ -74,6 +74,12 @@ export const PostCreatorInfo = styled.View`
     align-items: center;
     margin-bottom: 3px;
 `
+export const ChatInfo = styled.View`
+    flex-direction: row;
+    margin-left: 5px; 
+    align-items: center;
+    margin-bottom: 3px;
+`
 export const NickName = styled.Text`
     font-weight: 700;
 `

@@ -13,10 +13,10 @@ application = ProtocolTypeRouter({
     'http': get_asgi_application(),
     'websocket': AllowedHostsOriginValidator(
         JWTAuthMiddlewareStack(
-        URLRouter([
-            re_path(r'^ws/chat/$', ChatConsumer.as_asgi())
-            ]
-        )
+            URLRouter(
+                [
+                    re_path(r'^ws/chat/$', ChatConsumer.as_asgi())
+                ]
+            )
     ))
 })
-# (?P<token>[\w.]+)/

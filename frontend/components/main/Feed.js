@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import React, { useEffect, useState, Component } from 'react';
 import { StyleSheet, View, Text, Image, FlatList, ActivityIndicator, Button, TouchableOpacity, Touchable } from 'react-native';
 import { connect } from 'react-redux';
@@ -55,6 +54,15 @@ export function Feed(props){
                 size='large' 
                 color='black'
                 />
+            </View>
+        )
+    }
+
+    if (posts.length == 0){
+        return (
+            <View style={styles.noFeed}>
+                <MarerialCommunityIcons name="account-search" size={80} color='#7E7E7F'/>
+                <Text style={{color:'#7E7E7F'}}>Subscribe on people to see them in your feed</Text>
             </View>
         )
     }
@@ -136,6 +144,11 @@ const styles = StyleSheet.create({
     indicator:{
         flex:1, 
         justifyContent: 'center'
+    },
+    noFeed:{
+        flex:1,
+        justifyContent: 'center',
+        alignItems: 'center'
     }
 })
 const mapStateToProps = (state) => ({

@@ -12,8 +12,9 @@ urlpatterns = [
     path('userinfo/<int:pk>/', UserInfoDetail.as_view(), name="user_info"),
     path('feed/', Feed.as_view(), name="feed"),
     path('feed/<int:pk>/<str:action>/', LikeDislike.as_view(), name="like_dislike"),
+    path('user_chats/', UserChats.as_view(), name="user_chats"),
     path('follow_system/<int:pk>/<str:action>/', FollowUnfollow.as_view(), name="follow_unfollow"),
-    path('create_post/', CreatePost.as_view(), name="create_post"),
+    path('create_post/', PostCreate.as_view(), name="create_post"),
     path('post_comments/<int:post_id>/', PostComments.as_view(), name="post_comments"),
     # path('followedusersinfo/<int:pk>/', FollowedUsersView.as_view(), "followedusers"),
 ]

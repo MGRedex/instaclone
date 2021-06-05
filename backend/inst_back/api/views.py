@@ -10,13 +10,12 @@ from .serializers import *
 from .models import *
 from .serializers import *
 from functools import reduce
-# Create your views here.
 
 
 class UserInfoDetail(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, pk):
-        model = Profile.objects.get(user__id = pk)
+        user_profile = Profile.objects.get(user__id = pk)
         serializer = ProfileSerializer(model)
         return Response(serializer.data)
 
@@ -55,21 +54,36 @@ class FollowUnfollow(APIView):
 class Feed(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request):
-        user_profile = Profile.objects.get(user__id=request.user.id)
-        all_posts = [following_user.posts.all() for following_user in user_profile.following.all()]
-        all_posts = reduce(lambda all_posts,posts: all_posts.union(posts), all_posts)
-        all_posts = all_posts.order_by('-created')
-        serializer = GetPostSerializer(all_posts, many=True)
-        return Response(serializer.data)
+        user_profile = Profile.objects.get(user__id = request.user.id)
+        try:
+            feed_posts = [following_user.posts.all() for following_user in user_profile.following.all()]
+            feed_posts = reduce(lambda feed_posts,posts: feed_posts.union(posts), feed_posts)
+            feed_posts = feed_posts.order_by('-created')
+            serializer = GetPostSerializer(feed_posts, many = True)
+            return Response(serializer.data)
+        except:
+            return Response({})
 
-class CreatePost(APIView):
+class UserChats(APIView):
+    permission_classes = (IsAuthenticated,)
+    def get(self, request):
+        user_profile = Profile.objects.get(user__id = request.user.id)
+        try:
+            user_chats = user_profile.chats.all()
+            serializer = ChatSerializer(user_chats, request_user_id = request.user.id, many = True)
+            return Response(serializer.data)
+        except:
+            return Response({})
+
+
+class PostCreate(APIView):
     permission_classes = (IsAuthenticated,)
     parsers = (MultiPartParser,)
     def post(self, request):
         serializer = CreatePostSerializer(data = request.data)
         if serializer.is_valid():
             post_author = Profile.objects.get(user__id = request.user.id)
-            post = serializer.save(author=post_author) 
+            post = serializer.save(author = post_author) 
             return Response(status = 200)
         else:
             return Response(serializer._errors, status = 400)
@@ -81,10 +95,12 @@ class UserRegister(APIView):
             user = serializer.save()
             Profile.objects.create(user = user)
             refresh_token = RefreshToken.for_user(user)
-            return Response(data={
-                'refresh': str(refresh_token),
-                'access': str(refresh_token.access_token),
-            },status=200)
+            return Response(
+                data={
+                    'refresh': str(refresh_token),
+                    'access': str(refresh_token.access_token),
+                },
+                status=200)
         else:
             return Response(serializer._errors, status = 400)
 
@@ -100,10 +116,10 @@ class UserLogout(APIView):
             return Response(status = 400)
 
 class PostComments(APIView):
-    # permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated,)
     def get(self, request, post_id):
+        serializer = CommentSerializer(comments, many = True)
         post = Post.objects.get(id = 5)
         comments = post.comments.all()
-        serializer = CommentSerializer(comments, many = True)
         return Response(serializer.data)
 

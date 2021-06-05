@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { View, Button, TextInput, Text } from 'react-native';
 import { RegLogTextInput, SignButton } from '../../Styles';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { createWebsocket } from '../../redux/actions/index';
 import axios from 'axios';
 import { SetJWT } from './Token';
 import { USER_AUTH_STATE_CHANGE } from '../../redux/constants/';
@@ -28,6 +30,7 @@ class RegisterScreen extends Component {
         }).then((response) => {
             SetJWT(response.data)
             dispatch({type: USER_AUTH_STATE_CHANGE, loggedIn: true})
+            createWebsocket(response.data.access)
         }).catch((error) => {console.log(error)})
     }
     render(){
@@ -55,4 +58,11 @@ class RegisterScreen extends Component {
 const mapStateToProps = (state) => ({
     loggedIn: state.userState.loggedIn
 })
-export default connect(mapStateToProps)(RegisterScreen)
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        dispatch,
+        ...bindActionCreators({createWebsocket}, dispatch),
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(RegisterScreen)

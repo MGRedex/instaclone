@@ -16,7 +16,7 @@ class UserInfoDetail(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, pk):
         user_profile = Profile.objects.get(user__id = pk)
-        serializer = ProfileSerializer(model)
+        serializer = ProfileSerializer(user_profile)
         return Response(serializer.data)
 
 class LikeDislike(APIView):
@@ -118,8 +118,8 @@ class UserLogout(APIView):
 class PostComments(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, post_id):
-        serializer = CommentSerializer(comments, many = True)
         post = Post.objects.get(id = 5)
         comments = post.comments.all()
+        serializer = CommentSerializer(comments, many = True)
         return Response(serializer.data)
 

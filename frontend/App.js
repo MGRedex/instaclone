@@ -20,9 +20,10 @@ import { createStore, applyMiddleware } from 'redux';
 import * as SecureStore from 'expo-secure-store';
 import { GetAccessToken } from './components/auth/Token';
 import ChatScreen from './components/main/Chat';
+import config from './Config'
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-axios.defaults.baseURL = 'http://192.168.1.104:8000'
+axios.defaults.baseURL = `http://${config.SERVER_IP}:${config.SERVER_PORT}`
 
 const store = createStore(rootReducer, applyMiddleware(thunk))
 const Stack = createStackNavigator();

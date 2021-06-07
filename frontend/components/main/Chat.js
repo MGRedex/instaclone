@@ -60,8 +60,9 @@ export function Chat(props){
             numColumns={1}
             horizontal={false}
             data={chat !== undefined ? chat.messages : []}
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({item}) => (
-                (item.sender == props.currentUser.id) ? 
+                (item.sender.toString() == props.currentUser.id) ? 
                 (
                     <View style={{
                         flex:1, 

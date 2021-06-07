@@ -27,10 +27,11 @@ export class MainScreen extends Component{
             (token) => {
                 let token_decoded = jwt_decode(token)
                 fetchUser(token_decoded.user_id)
+                fetchFeed()
+                fetchChats()
             }
         )
-        fetchFeed()
-        fetchChats()
+        
     }
     render(){
         const { currentUser } = this.props

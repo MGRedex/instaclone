@@ -14,7 +14,7 @@ import {
     USER_WEBSOCKET_STATE_CHANGE,
     USER_CHAT_NEW_MESSAGE,
     USER_CHAT_STATE_CHANGE } from '../constants/index'
-
+import config from '../../Config'
 import axios from 'axios';
 
 export function fetchUser(id){
@@ -69,7 +69,7 @@ export function fetchChats(){
 export function createWebsocket(token){
     return ((dispatch, getState) => {
         if (getState().userState.websocket === null){
-            websocket = new WebSocket(`ws://192.168.1.104:8000/ws/chat/?token=${token}`)
+            websocket = new WebSocket(`ws://${config.SERVER_IP}:${config.SERVER_PORT}/ws/chat/?token=${token}`)
             websocket.onopen = (event) => {
                 console.log("CONNECTION ACCEPTED!")
             }

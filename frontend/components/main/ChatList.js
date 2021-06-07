@@ -23,6 +23,7 @@ export function ChatList(props){
                 numColumns={1}
                 horizontal={false}
                 data={chatList}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({item}) => (
                     <View style={{marginTop: 15, marginLeft: 7}}>
                         <TouchableOpacity
@@ -33,9 +34,11 @@ export function ChatList(props){
                                 <UserAvatar
                                 source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                             </TouchableOpacity>
-                            <View style={{height: "100%", marginLeft: 7}}>
+                            <View style={{height: "100%", marginLeft: 7, flex:0.9}}>
                                 <NickName style={{marginTop: 4}}>'username'</NickName>
-                                {/* <Text style={{marginTop: 3}}>{item.lastMessage}</Text> */}
+                                <View style={{flexDirection:'row', flex:1}}>
+                                    <Text numberOfLines={1} style={{marginTop: 3, flex:1}}>{item.messages.slice(-1)[0].text}</Text>
+                                </View>
                             </View>
                         </TouchableOpacity>
                     </View>

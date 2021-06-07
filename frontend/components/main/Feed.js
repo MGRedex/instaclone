@@ -73,11 +73,12 @@ export function Feed(props){
                 numColumns={1}
                 horizontal={false}
                 data={posts}
+                keyExtractor={(item, index) => index.toString()}
                 renderItem={({item}) => (
                     <View style={{marginTop: 15}}>
                         <PostCreatorInfo>
                             <TouchableOpacity
-                            onPress={() => props.navigation.navigate("Profile", {uid: item.author.user.id.toString()})}>
+                            onPress={() => props.navigation.navigate("Profile", {uid: item.author.user.id})}>
                                 <UserAvatar
                                 source={require('../../placeholder-images/Profile_avatar_placeholder_large.png')}/>
                             </TouchableOpacity>
@@ -99,20 +100,20 @@ export function Feed(props){
                         {item.currentUserLike ? 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onDislikePress(item.id.toString())}>
+                                onDislikePress(item.id)}>
                                 <MarerialCommunityIcons name="heart" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         ) : 
                         (
                             <TouchableOpacity style={{marginLeft:2}} onPress={() => 
-                                onLikePress(item.id.toString())}>
+                                onLikePress(item.id)}>
                                 <MarerialCommunityIcons name="heart-outline" color="#E94D4D" size={30}/>
                             </TouchableOpacity>
                         )}
                         <Text style={{marginLeft: 5}}
                         onPress={() => props.navigation.navigate(
                             "Comments", 
-                            {postId: item.id.toString()})}>
+                            {postId: item.id})}>
                             View all comments...
                         </Text>
                     </View>

@@ -129,7 +129,8 @@ export function Profile(props){
     }
 
     const onLogout = () => {
-        const { dispatch } = props
+        const { dispatch, websocket } = props
+        websocket.close()
         GetRefreshToken().then(
             (token) => {
                 dispatch({type: USER_AUTH_STATE_CHANGE, loggedIn: false})
@@ -279,6 +280,7 @@ const mapStateToProps = (store) => {
         posts: store.userState.posts,
         following: store.userState.following,
         followers: store.userState.followers,
+        websocket: store.userState.websocket,
         users: store.usersState.users,
     }
 }

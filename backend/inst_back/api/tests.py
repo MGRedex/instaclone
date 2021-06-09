@@ -112,6 +112,7 @@ class FollowTestCase(APITestCase):
 
         with self.assertRaisesMessage(Profile.DoesNotExist, 'Profile matching query does not exist'):
             followee_user.followers.get(id = 2)
+            
 class FeedTestCase(APITestCase):
     
 

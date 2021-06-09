@@ -11,8 +11,8 @@ class AuthenticationTestCase(APITestCase):
 
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create_user(username = 'testuser1', password='12345', id=1)
-        Profile.objects.create(user=user, id=1)
+        user = User.objects.create_user(username = 'testuser1', password = '12345', id = 1)
+        Profile.objects.create(user = user, id = 1)
         cls.authentication = JWTAuthentication()
     
     def test_register(self):
@@ -48,14 +48,14 @@ class AuthenticationTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.data.keys()), ['refresh','access'])
 
-        login_user = User.objects.get(id=1)
+        login_user = User.objects.get(id = 1)
         decoded_token = self.authentication.get_validated_token(response.data['access'])
         token_user = self.authentication.get_user(decoded_token)
 
         self.assertEqual(token_user, login_user)
 
     def test_logout(self):
-        login_user = User.objects.get(id=1)
+        login_user = User.objects.get(id = 1)
         token = RefreshToken.for_user(login_user)
 
         self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {token.access_token}')

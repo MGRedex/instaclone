@@ -6,6 +6,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
 from .models import *
+from itertools import zip_longest
 
 class AuthenticationTestCase(APITestCase):
 
@@ -115,5 +116,44 @@ class FollowTestCase(APITestCase):
             
 class FeedTestCase(APITestCase):
     
+    @classmethod
+    def setUpTestData(cls):
+        followee_user = User.objects.create_user(username = 'testuser1', password = '12345')
+        folowee_profile = Profile.objects.create(user = followee_user, id = 1)
 
+        follower_user = User.objects.create_user(username = 'testuser2', password = '12345')
+        follower_profile = Profile.objects.create(user = follower_user, id = 2)
+        follower_profile.following.add(folowee_profile)
+
+        for i in range(1,3):
+            Post.objects.create(author = folowee_profile, caption = f'testpost{i}')
+
+        cls.authentication = JWTAuthentication()
+        cls.token = RefreshToken.for_user(follower_user)
+
+    def test_feed(self):
+        url = reverse('feed')
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+
+        feed_posts = list(Post.objects.filter(author_id = 1))
+
+        data = sorted(response.data, key = lambda post: post['id'])
+
+        for (post, response_post) in zip_longest(feed_posts, data):
+            self.assertEqual({
+                'caption': post.caption, 
+                'author': {
+                    'user': {
+                        'username': post.author.user.username,
+                        'email': post.author.user.email,
+                        'id': post.author.user.id,
+                    }
+                },
+                'created': str(post.created).replace(' ', 'T').replace('+00:00', 'Z'),
+                'id': post.id,
+                'content': None},
+                response_post)  
 

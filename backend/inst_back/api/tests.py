@@ -157,3 +157,47 @@ class FeedTestCase(APITestCase):
                 'content': None},
                 response_post)  
 
+class LikeDislikeTestCase(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        post_creator_user = User.objects.create_user(username = 'testuser1', password = '12345')
+        post_creator_profile = Profile.objects.create(user = post_creator_user, id = 1)
+
+        liker_user = User.objects.create_user(username = 'testuser2', password = '12345')
+        liker_profile = Profile.objects.create(user = liker_user, id = 2)
+
+        Post.objects.create(author = post_creator_profile, caption = f'testpost1')
+
+        cls.authentication = JWTAuthentication()
+        cls.token = RefreshToken.for_user(liker_user)
+
+    def test_like(self):
+        url = reverse('like_dislike', kwargs = {'pk': 1, 'action': 'like'})
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+        response = self.client.put(url)
+
+        self.assertEqual(response.status_code, 204)
+
+        liked_post = Post.objects.get()
+        liker_profile = Profile.objects.get(id = 2)
+
+        self.assertEqual(liked_post.likes.get(), liker_profile)
+        self.assertEqual(liker_profile.liked_posts.get(), liked_post)
+        
+    def test_dislike(self):
+        liked_post = Post.objects.get()
+        liker_profile = Profile.objects.get(id = 2)
+        liked_post.likes.add(liker_profile)
+
+        url = reverse('like_dislike', kwargs = {'pk': 1, 'action': 'dislike'})
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+        response = self.client.put(url)
+
+        self.assertEqual(response.status_code, 204)
+
+        with self.assertRaisesMessage(Profile.DoesNotExist, 'Profile matching query does not exist'):
+            liked_post.likes.get()
+
+        with self.assertRaisesMessage(Post.DoesNotExist, 'Post matching query does not exist'):
+            liker_profile.liked_posts.get()
+

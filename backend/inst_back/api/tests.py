@@ -201,3 +201,92 @@ class LikeDislikeTestCase(APITestCase):
         with self.assertRaisesMessage(Post.DoesNotExist, 'Post matching query does not exist'):
             liker_profile.liked_posts.get()
 
+class UserInfoTest(APITestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            email = 'testmail1@gmail.com')
+
+        user_profile = Profile.objects.create(
+            user = user, 
+            id = 1)
+
+        cls.authentication = JWTAuthentication()
+        cls.token = RefreshToken.for_user(user)
+
+    def test_user_info(self):
+        user_profile = Profile.objects.get(id = 1)
+
+        follower_user = User.objects.create_user(
+            username = 'testuser2', 
+            password = '12345',
+            email = 'testmail2@gmail.com')
+
+        follower_profile = Profile.objects.create(
+            user = follower_user, 
+            id = 2)
+
+        user_post = Post.objects.create(
+            author = user_profile, 
+            caption = 'testpost1')
+
+        liked_post = Post.objects.create(
+            author = follower_profile, 
+            caption = 'testpost2')
+
+        liked_post.likes.add(user_profile)
+
+        user_profile.following.add(follower_profile)
+        follower_profile.following.add(user_profile)
+
+        url = reverse('user_info', kwargs = {'pk': 1})
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 200)
+        print(response.data)
+        self.assertEqual({
+            'user':{
+                'username': user_profile.user.username,
+                'email': user_profile.user.email,
+                'id': user_profile.user.id
+            },
+            'following':[
+                {
+                    'user':{
+                        'username': follower_profile.user.username,
+                        'email': follower_profile.user.email,
+                        'id': follower_profile.user.id
+                    }
+                
+                }
+            ],
+            'posts':[
+                {
+                    'caption': user_post.caption,
+                    'created': str(user_post.created).replace(' ', 'T').replace('+00:00', 'Z'),
+                    'id': user_post.id,
+                    'content': None
+                }
+            ],
+            'followers':[
+                {
+                    'user':{
+                        'username': follower_profile.user.username,
+                        'email': follower_profile.user.email,
+                        'id': follower_profile.user.id
+                    }
+
+                }
+            ],
+            'liked_posts': [
+                {
+                    'id': liked_post.id
+                }
+            ]
+        },
+        response.data)
+

@@ -4,18 +4,24 @@
 
 ### Description
 **Instaclone is an android app created as a practice project, not for production.**
-However, the settings and environment of the project are done in the way it would be done for production purposes.
 
 Initially, project was written using JavaScript and Firebase, later, due to backend practice, Firebase was changed to Python Django.
+
+As a social app Instaclone has the following features:
+- Creating posts, that might be commented on and liked
+- Chatting with other users
+- Following other users
+- Feed consisting of posts from users you follow
+
+And will provide more in the feature [list of planned features](#all-features-check-list)
 
 ### Frontend
 Was written using:
 - Javascript
 - React-native
 - Axios
-- Secure store
+- Expo
 - Redux
-- React-redux
 
 ### Backend
 Was written using:
@@ -28,3 +34,4 @@ Was written using:
 - Redis
 
 ### Security
+## All features check list

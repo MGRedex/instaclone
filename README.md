@@ -16,13 +16,8 @@
 
 Initially, project was written using JavaScript and Firebase, later, due to backend practice, Firebase was changed to Python Django.
 
-As a social app Instaclone has the following features:
-- Creating posts, that might be commented on and liked
-- Chatting with other users
-- Following other users
-- Feed consisting of posts from users you follow
-
-And will provide more in the feature ([list of planned features](#all-features-check-list))
+Since Instaclone is not yet complete, not all features are provided, so there is a
+[list of planned features](#all-features-check-list)
 
 ### Frontend
 Was written using:

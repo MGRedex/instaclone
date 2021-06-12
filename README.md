@@ -14,7 +14,7 @@
 ### Description
 ‼️**Instaclone is an android social app created as a practice project, not for production.**‼️
 
-Initially, project was written using JavaScript and Firebase, later, due to backend practice, Firebase was changed to Python Django.
+Initially, project was written using React-native and Firebase, later, due to backend practice, Firebase was changed to Python Django.
 
 Since Instaclone is not yet complete, not all features are provided, so there is a
 [list of planned features](#all-features-check-list)

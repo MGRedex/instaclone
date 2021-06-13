@@ -7,7 +7,9 @@
   3. [Backend](#backend)
   4. [Security](#security)
 
-2.[All features check list](#all-features-check-list)
+2.[How to run the project](#how-to-run-the-project)
+
+3.[All features check list](#all-features-check-list)
 
 ## About the project
 
@@ -45,6 +47,27 @@ Due to Instaclone not for production, security in project was done where it can 
 Other things like protocols (http, ws) must be switched to https and wss, that can be done with ngrok for example.
 Django secret key and other sensitive data for configuration must be moved to more secure place than environment variables.
 
+## How to run the project
+
+#### Installing
+1. Clone project repository
+2. Download required python version (3.8) from [official website](https://www.python.org/downloads/). On linux you can install python [from command prompt](https://docs.python-guide.org/starting/install3/linux/).
+3. Install pipenv and all required packages:
+```
+pip install pipenv
+
+cd folder-with-cloned-project/backend
+
+# Automatically will create venv and install required packages
+pipenv install
+
+# To enter in venv
+pipenv shell
+
+# To exit venv
+exit
+```
+4. [Install PostgreSQL](https://www.postgresql.org/download/)
 ## All features check list
 ✔️ Chat
 

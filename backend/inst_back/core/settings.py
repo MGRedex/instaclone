@@ -61,7 +61,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:19006',
 ]
 
-ROOT_URLCONF = 'inst_back.urls'
+ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
@@ -79,8 +79,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'inst_back.wsgi.application'
-ASGI_APPLICATION = 'inst_back.asgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 SITE_ID = 1
 
@@ -90,8 +90,15 @@ SITE_ID = 1
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'insta_db',
+        'USER': 'django_logic',
+        'PASSWORD': 'djlg3000',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        # 'TEST':{
+        #     'NAME': 'insta_test',
+        # }
     }
 }
 

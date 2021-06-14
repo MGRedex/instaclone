@@ -7,7 +7,7 @@ from chat.consumers import *
 from django.urls import re_path
 
 from channels.security.websocket import AllowedHostsOriginValidator
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'inst_back.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
 application = ProtocolTypeRouter({
     'http': get_asgi_application(),

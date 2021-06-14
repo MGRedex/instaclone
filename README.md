@@ -40,13 +40,10 @@ Was written using:
 - Redis
 
 ### Security
-Due to Instaclone not for production, security in project was done where it can be done:
-- Secure storage for jwt tokens on frontend
-- Database user privilages on backend
+Since Instaclone is not for production, some security measures are not available (such as https and wss), but everyone can
+do it localy with third-party software (like ngrok for https).
 
-Other things like protocols (http, ws) must be switched to https and wss, that can be done with ngrok for example.
-Django secret key and other sensitive data for configuration must be moved to more secure place than environment variables.
-
+What about storage, PostgreSQL secured and available only for django connection, JWT tokens storage on client is a [secure storage](https://docs.expo.io/versions/latest/sdk/securestore/)
 ## How to run the project
 
 #### Installing
@@ -68,6 +65,18 @@ pipenv shell
 exit
 ```
 4. [Install PostgreSQL](https://www.postgresql.org/download/)
+5. Install required npm packages
+```
+cd folder-with-cloned-project/backend
+
+# Automatically will create venv and install required packages
+pipenv install
+
+# To enter in venv
+pipenv shell
+
+# To exit venv
+exit
 ## All features check list
 ✔️ Chat
 

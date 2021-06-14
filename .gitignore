@@ -1,7 +1,8 @@
 node_modules/
-backend/inst_back/db.sqlite3
 .expo/*
 */.expo/*
+frontend/my-upload-key.keystore
+backend/inst_back/db.sqlite3
 backend/inst_back/media/
 backend/inst_back/api/migrations/
 npm-debug.*

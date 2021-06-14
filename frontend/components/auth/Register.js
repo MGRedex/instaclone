@@ -22,7 +22,7 @@ class RegisterScreen extends Component {
     }
     onSignUp(){
         const { email, password, login } = this.state
-        const { dispatch } = this.props
+        const { dispatch, createWebsocket } = this.props
         axios.post('api/auth/registration/', {
             "username":login,
             "email":email,

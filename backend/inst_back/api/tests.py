@@ -340,3 +340,38 @@ class PostCreationTest(APITestCase):
 
         rmtree(settings.MEDIA_ROOT + f'/{self.uid}')
 
+
+class PostCommentsTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            id = 1)
+
+        profile = Profile.objects.create(
+            user = user, 
+            id = 1)
+
+        Post.objects.create(
+            author = profile, 
+            caption = f'testpost1', 
+            id = 1)
+
+        cls.authentication = JWTAuthentication()
+        cls.token = RefreshToken.for_user(user)
+    def test_post_comments(self):
+        post = Post.objects.get()
+        profile = Profile.objects.get()
+        url = reverse('post_comments', kwargs = {'post_id': post.id})
+        data = {'text': 'comment testing',}
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+
+        response = self.client.post(url, data, format = 'json')
+        self.assertEqual(response.status_code, 200)
+
+        post_comment = post.comments.get()
+
+        self.assertEqual(post_comment.text, 'comment testing')
+        self.assertEqual(post_comment.author, profile)
+

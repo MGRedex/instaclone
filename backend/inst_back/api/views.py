@@ -117,9 +117,23 @@ class UserLogout(APIView):
 
 class PostComments(APIView):
     permission_classes = (IsAuthenticated,)
+
     def get(self, request, post_id):
-        post = Post.objects.get(id = 5)
+        try:
+            post = Post.objects.get(id = post_id)
         comments = post.comments.all()
         serializer = CommentSerializer(comments, many = True)
-        return Response(serializer.data)
+            return Response(serializer.data, status = 200)
+        except:
+            return Response([])
+
+    def post(self, request, post_id):
+        serializer = CommentSerializer(data = request.data)
+        if serializer.is_valid():
+            comment_author = Profile.objects.get(user__id = request.user.id)
+            comment_post = Post.objects.get(id = post_id)
+            serializer.save(author = comment_author, post = comment_post) 
+            return Response(status = 200)
+        else:
+            return Response(serializer._errors, status = 400)
 

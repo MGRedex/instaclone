@@ -290,3 +290,53 @@ class UserInfoTest(APITestCase):
         },
         response.data)
 
+
+class PostCreationTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.uid = 1
+
+        user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            email = 'testmail1@gmail.com',
+            id = cls.uid)
+
+        user_profile = Profile.objects.create(
+            user = user, 
+            id = 1)
+
+        cls.authentication = JWTAuthentication()
+        cls.token = RefreshToken.for_user(user)
+
+    @override_settings(
+        MEDIA_ROOT = os.path.join(settings.BASE_DIR, 'test_media'),
+        MEDIA_URL = '/test_media/')
+    def test_post_creation(self):
+        url = reverse('create_post')
+        data = {'caption': 'testpost',}
+        self.client.credentials(HTTP_AUTHORIZATION = f'Bearer {self.token.access_token}')
+
+        with open(settings.MEDIA_ROOT + '/test_image.jpg', 'rb') as image:
+            image_byte_array = image.read()
+            post_image = SimpleUploadedFile(
+                'test_post_image.jpg', 
+                image_byte_array, 
+                'image/jpg')
+            
+            data['content'] = post_image
+        
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+
+        created_post = Post.objects.get()
+
+        self.assertEqual(created_post.caption, 'testpost')
+        self.assertEqual(
+            created_post.content.url, 
+            f'/test_media/{self.uid}/posts/testpost.jpg'
+        )
+
+        rmtree(settings.MEDIA_ROOT + f'/{self.uid}')
+

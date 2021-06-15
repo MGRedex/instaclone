@@ -77,6 +77,7 @@ pipenv shell
 
 # To exit venv
 exit
+```
 ## All features check list
 ✔️ Chat
 

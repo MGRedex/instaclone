@@ -4,7 +4,10 @@ node_modules/
 frontend/my-upload-key.keystore
 backend/inst_back/db.sqlite3
 backend/inst_back/media/
-backend/inst_back/api/migrations/
+**/migrations
+backend/Pipfile
+backend/Pipfile.lock
+backend/database
 npm-debug.*
 *.jks
 *.p8

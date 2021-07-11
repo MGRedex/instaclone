@@ -1,5 +1,3 @@
-import firebase from 'firebase';
-import 'firebase/firestore';
 import React, { useState } from 'react';
 import { View, Text, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import MarerialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'

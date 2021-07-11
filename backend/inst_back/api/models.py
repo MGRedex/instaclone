@@ -4,11 +4,14 @@ from django.contrib.auth.models import User
 def get_avatar_upload_url(instance, filename):
     filename = filename.split('.')
     format = filename[1]
+
     return f"{instance.user.id}/avatar/profile_image.{format}"
+
 
 def get_post_upload_url(instance, filename):
     filename = filename.split('.')
     format = filename[1]
+
     return f"{instance.author.user.id}/posts/{instance.caption}.{format}"
 
 
@@ -31,7 +34,8 @@ class Profile(models.Model):
         
 
     def __str__(self):
-        return f"{self.user.username}"
+        return f"{self.id}"
+
 
 class Post(models.Model):
     caption = models.CharField(

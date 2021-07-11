@@ -9,6 +9,7 @@ class Chat(models.Model):
         Profile, 
         related_name = 'chats')
 
+
 class Message(models.Model):
     text = models.CharField(
         max_length = 250)

@@ -39,12 +39,13 @@ Was written using:
 - PostgreSQL (was changed from MySQL)
 - Redis
 
-### Security (Section not finished)
+### Security
 
 ## How to run the project
 
-#### Installing
-There will be Dockerfile soon...
+### Installing
+1. Install Docker and Docker-compose
+2. Build from backend folder with ```docker-compose up --build```
 
 ## All features check list
 ✔️ Chat

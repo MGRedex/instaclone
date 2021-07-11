@@ -1,0 +1,4 @@
+./database
+./Pipfile
+./Pipfile.lock
+./media/*

@@ -10,10 +10,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # For production use a different storage method
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'secret-key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', True)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', os.environ.get('DJANGO_SERVER_IP')]
 
@@ -90,18 +90,17 @@ SITE_ID = 1
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'insta_db',
-        'USER': 'django_logic',
-        'PASSWORD': 'djlg3000',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'ENGINE': os.environ.get('SQL_ENGINE', "django.db.backends.postgresql_psycopg2"),
+        'NAME': os.environ.get('SQL_DATABASE_NAME', "insta_db"),
+        'USER': os.environ.get('SQL_USER', 'django_logic'),
+        'PASSWORD': os.environ.get('SQL_PASSWORD', 'djlg3000'),
+        'HOST': os.environ.get('SQL_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('SQL_PORT', '5432'),
         # 'TEST':{
         #     'NAME': 'insta_test',
         # }
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -175,9 +174,11 @@ SIMPLE_JWT = {
 
 CHANNEL_LAYERS = {
     'default':{
-        'BACKEND':'channels_redis.core.RedisChannelLayer',
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
         'CONFIG':{
-            'hosts': [('localhost', 6379)],
+            'hosts': [(
+                os.environ.get('CHANNELS_HOST', 'redis'), 
+                os.environ.get('CHANNELS_PORT', 6379))],
         },
     }
 }

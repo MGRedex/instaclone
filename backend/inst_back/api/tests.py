@@ -1,19 +1,30 @@
-from django.test import TestCase
+import os
+import io
+from itertools import zip_longest
+from shutil import rmtree
+
+from PIL import Image
+from django.test import TestCase, override_settings
 from django.urls import reverse
+from django.conf import settings
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken
+
 from .models import *
-from itertools import zip_longest
 
 class AuthenticationTestCase(APITestCase):
-
     @classmethod
     def setUpTestData(cls):
-        user = User.objects.create_user(username = 'testuser1', password = '12345', id = 1)
-        Profile.objects.create(user = user, id = 1)
+        user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345')
+
+        Profile.objects.create(
+            user = user)
         cls.authentication = JWTAuthentication()
     
     def test_register(self):
@@ -28,7 +39,7 @@ class AuthenticationTestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.data.keys()), ['refresh','access'])
 
-        created_profile = Profile.objects.get(id=2)
+        created_profile = Profile.objects.get(id = 2)
 
         self.assertEqual(created_profile.user.username, 'testuser2')
         self.assertEqual(created_profile.user.email, 'testmail@gmail.com')
@@ -71,15 +82,27 @@ class AuthenticationTestCase(APITestCase):
         blacklisted_token = BlacklistedToken.objects.get()
         self.assertEqual(str(blacklisted_token.token.token), str(token))
 
-class FollowTestCase(APITestCase):
     
+class FollowTestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        followee_user = User.objects.create_user(username = 'testuser1', password = '12345')
-        followee_profile = Profile.objects.create(user = followee_user, id = 1)
+        followee_user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            id = 1)
 
-        follower_user = User.objects.create_user(username = 'testuser2', password = '12345')
-        follower_profile = Profile.objects.create(user = follower_user, id = 2)
+        followee_profile = Profile.objects.create(
+            user = followee_user, 
+            id = 1)
+
+        follower_user = User.objects.create_user(
+            username = 'testuser2', 
+            password = '12345', 
+            id = 2)
+
+        follower_profile = Profile.objects.create(
+            user = follower_user, 
+            id = 2)
 
         cls.authentication = JWTAuthentication()
         cls.token = RefreshToken.for_user(follower_user)
@@ -113,20 +136,35 @@ class FollowTestCase(APITestCase):
 
         with self.assertRaisesMessage(Profile.DoesNotExist, 'Profile matching query does not exist'):
             followee_user.followers.get(id = 2)
-            
-class FeedTestCase(APITestCase):
+
     
+class FeedTestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        followee_user = User.objects.create_user(username = 'testuser1', password = '12345')
-        folowee_profile = Profile.objects.create(user = followee_user, id = 1)
+        followee_user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            id = 1)
 
-        follower_user = User.objects.create_user(username = 'testuser2', password = '12345')
-        follower_profile = Profile.objects.create(user = follower_user, id = 2)
+        folowee_profile = Profile.objects.create(
+            user = followee_user, 
+            id = 1)
+
+        follower_user = User.objects.create_user(
+            username = 'testuser2', 
+            password = '12345', 
+            id = 2)
+
+        follower_profile = Profile.objects.create(
+            user = follower_user, 
+            id = 2)
+
         follower_profile.following.add(folowee_profile)
 
         for i in range(1,3):
-            Post.objects.create(author = folowee_profile, caption = f'testpost{i}')
+            Post.objects.create(
+                author = folowee_profile, 
+                caption = f'testpost{i}')
 
         cls.authentication = JWTAuthentication()
         cls.token = RefreshToken.for_user(follower_user)
@@ -157,16 +195,32 @@ class FeedTestCase(APITestCase):
                 'content': None},
                 response_post)  
 
+    
 class LikeDislikeTestCase(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        post_creator_user = User.objects.create_user(username = 'testuser1', password = '12345')
-        post_creator_profile = Profile.objects.create(user = post_creator_user, id = 1)
+        post_creator_user = User.objects.create_user(
+            username = 'testuser1', 
+            password = '12345', 
+            id = 1)
 
-        liker_user = User.objects.create_user(username = 'testuser2', password = '12345')
-        liker_profile = Profile.objects.create(user = liker_user, id = 2)
+        post_creator_profile = Profile.objects.create(
+            user = post_creator_user, 
+            id = 1)
 
-        Post.objects.create(author = post_creator_profile, caption = f'testpost1')
+        liker_user = User.objects.create_user(
+            username = 'testuser2', 
+            password = '12345', 
+            id = 2)
+
+        liker_profile = Profile.objects.create(
+            user = liker_user, 
+            id = 2)
+
+        Post.objects.create(
+            author = post_creator_profile, 
+            caption = f'testpost1', 
+            id = 1)
 
         cls.authentication = JWTAuthentication()
         cls.token = RefreshToken.for_user(liker_user)
@@ -201,14 +255,15 @@ class LikeDislikeTestCase(APITestCase):
         with self.assertRaisesMessage(Post.DoesNotExist, 'Post matching query does not exist'):
             liker_profile.liked_posts.get()
 
+    
 class UserInfoTest(APITestCase):
-
     @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(
             username = 'testuser1', 
             password = '12345', 
-            email = 'testmail1@gmail.com')
+            email = 'testmail1@gmail.com',
+            id = 1)
 
         user_profile = Profile.objects.create(
             user = user, 
@@ -231,11 +286,13 @@ class UserInfoTest(APITestCase):
 
         user_post = Post.objects.create(
             author = user_profile, 
-            caption = 'testpost1')
+            caption = 'testpost1',
+            id = 1)
 
         liked_post = Post.objects.create(
             author = follower_profile, 
-            caption = 'testpost2')
+            caption = 'testpost2',
+            id = 2)
 
         liked_post.likes.add(user_profile)
 
@@ -247,7 +304,7 @@ class UserInfoTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        print(response.data)
+        
         self.assertEqual({
             'user':{
                 'username': user_profile.user.username,
@@ -279,7 +336,7 @@ class UserInfoTest(APITestCase):
                         'email': follower_profile.user.email,
                         'id': follower_profile.user.id
                     }
-
+                
                 }
             ],
             'liked_posts': [

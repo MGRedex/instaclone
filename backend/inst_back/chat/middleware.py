@@ -11,6 +11,7 @@ def get_user(user_id):
     except User.DoesNotExist:
         return 'AnonymousUser'
 
+
 class JWTAuthMiddleware:
     def __init__(self, inner):
         self.inner = inner
@@ -25,6 +26,7 @@ class JWTAuthMiddleware:
             raise
 
         return await self.inner(scope, receive, send)
+
 
 def JWTAuthMiddlewareStack(inner):
     return JWTAuthMiddleware(AuthMiddlewareStack(inner))

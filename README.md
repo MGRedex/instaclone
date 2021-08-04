@@ -56,8 +56,6 @@ Was written using:
 
 ✔️ Likes and comments
 
-❌ Group chats
-
 ❌ Account statictic
 
 ❌ Stories
